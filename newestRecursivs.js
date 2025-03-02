@@ -99,179 +99,155 @@ class RecursiveClass {
       return grid;
     }
   
-    //12/22/24
+    
+    
+    
+    
+    
+    
+    
     pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
-      
-      if (rowIndex > HEIGHT - 1) {
+      if (rowIndex > HEIGHT - 1) return grid;
+    
+      // Handle the case of the last row and the last column.
+      if (rowIndex === HEIGHT - 1 && grid[HEIGHT - 1][WIDTH - 1] !== "-") {
+        // Perform necessary actions for the last row and column (commented out for now).
         return grid;
       }
-  
-      // on last row and last column and space does not have a dash
-      if (rowIndex === HEIGHT - 1 && grid[HEIGHT - 1][WIDTH - 1] != "-") {
-        this.createRow(grid, rowIndex);
-        //posiiton cursor on next row, first character
-        horizontalCursorPosition = horizontalCursorPosition + 5;
-      }
-      
-      let wordAtEndOfRowOne = [];
-      let topRow = grid[rowIndex - 1];
-      let bottomRow = grid[rowIndex];
-  
-      
-      //has no row above it
-      if (rowIndex == 0) {
-       this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
-       return grid;
-      }
-  
-      //right and left set, of top row - seperated by last soace or null
-      let holder = this.getLastSpaceOrNull(grid, topRow);
-      wordAtEndOfRowOne = holder.rightSide;
-      let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
-      
-      //On last line, has no dashes on rightmost upper and leftmost bottom and on bottom row
-      //first variable is short circuit
-      if (
-        rowIndex != 0 &&
-        grid[rowIndex][0] != "-" &&
-        grid[rowIndex - 1][WIDTH - 1] != "-" &&
-        rowIndex === HEIGHT - 1
-      ) {
-        //this.lastLineWorkings(grid, rowIndex);
-        console.log("here");
-        //this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
-        //return grid
-      }
-      //code available before 2/6/25
-  
-      //looking at index of both last space and last null
-      let firstIndexOfNullOnBottomRow = bottomRow.indexOf("-");
-      let firstIndexOfSpaceOnBottomRow = bottomRow.indexOf(" ");
-  
-      //first index is set to last character of row
-      if (firstIndexOfNullOnBottomRow === -1) {
-        firstIndexOfNullOnBottomRow = 27;
-      }
-      //first index is set to last character of row
-      if (firstIndexOfSpaceOnBottomRow === -1) {
-        firstIndexOfSpaceOnBottomRow = 27;
-      }
-      let lastIndexOfFirstWord = 0;
-      //choose whether space or null character that is farthest right on row
-      if (firstIndexOfSpaceOnBottomRow < firstIndexOfNullOnBottomRow) {
-        lastIndexOfFirstWord = firstIndexOfSpaceOnBottomRow;
-      } else {
-        lastIndexOfFirstWord = firstIndexOfNullOnBottomRow;
-      }
-      //Divide with farthest word on bottom row.
-      //!!
-      const [firstWordBottomRow, phraseAfterLeftWordBottomRow] = this.splitAtIndex(
-        bottomRow,
-        lastIndexOfFirstWord
-      );
-      //length of left word
-      let lengthOfFirstWordBottomRow = firstWordBottomRow.length;
-      //to check left hand word, before a null or space
-      let LengthOfNullsAndSpacesAfterFirstLeftMostCharacter = 0;
-      //because this code does not have a row below it, it is bottom row
-      //for loop to find the correct index
-      if (rowIndex != HEIGHT - 1)  {
-        for (let i = lengthOfFirstWordBottomRow; i < WIDTH - 1; i++) {
-          if (rowIndex < HEIGHT-1 && grid[rowIndex+1][i] != "-") {
-            break;
-          }
-          LengthOfNullsAndSpacesAfterFirstLeftMostCharacter++;
-        }
-      }
-      //no room for push, continue with next recursion - no remainder?!
-      if (LengthOfNullsAndSpacesAfterFirstLeftMostCharacter === 0) {
+    
+      // If there's no row above, push an empty row and recurse.
+      if (rowIndex === 0) {
         this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
         return grid;
       }
-  
-      //will word fit below in the spaces and nulls that are available after first characters
-      if (lengthOfRightWordAtRowOne < LengthOfNullsAndSpacesAfterFirstLeftMostCharacter  ) {
-        let combined = [];
-  
-        //code available before 2/6/25 - lengthOfRightWordAtRowOne
-        //put row together
-        combined = [
-          ...wordAtEndOfRowOne,
-          ...firstWordBottomRow,
-          ...phraseAfterLeftWordBottomRow,
-        ];
-        //length of bottom row word on left
-        let lengthOfFirstWordBottomRow = firstWordBottomRow.length;
-        //get one rows worth - and remainder to pass into recursion
+    
+      let topRow = grid[rowIndex - 1];
+      let bottomRow = grid[rowIndex];
+    
+      // Get the word at the end of the top row.
+      let wordAtEndOfRowOne = this.getLastSpaceOrNull(grid, topRow).rightSide;
+      let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
+    
+      // Handle the case where we are on the last line and certain conditions are met.
+      if (this.isOnLastLineWithoutDash(rowIndex, grid)) {
+        console.log("here");
+        // Perform actions for last line without dash (commented out for now).
+        return grid;
+      }
+    
+      // Find indices of spaces or dashes in the bottom row.
+      let lastIndexOfFirstWord = this.findRightmostSpaceOrDash(bottomRow);
+    
+      // Split the bottom row at the rightmost space or dash.
+      const [firstWordBottomRow, phraseAfterLeftWordBottomRow] = this.splitAtIndex(bottomRow, lastIndexOfFirstWord);
+    
+      let lengthOfFirstWordBottomRow = firstWordBottomRow.length;
+      let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
+    
+      // No room to push, continue with the next recursion.
+      if (remainingNullSpaces === 0) {
+        this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
+        return grid;
+      }
+    
+      // If the word fits below in the available space, combine and split rows.
+      if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
+        let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
         const [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
-  
-        if (
-          //code available before 2/6/25 - verticalcurs...
-          //no word passing across borders with shortcircuit
-          rowIndex != 0 &&
-          grid[rowIndex - 1][WIDTH - 1] === "-" ||
-          grid[rowIndex][0] === "-"
-        ) 
-        { 
-          
+    
+        if (this.shouldShortCircuit(grid, rowIndex)) {
           this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
           return grid;
         }
-  
-  
-        /////
-  
-        let flagContainedInBorderCrossing = false;
-        //this is for upper row where both upper and lower rows are moveable (upper condition) 
-        for(let i = WIDTH - lengthOfRightWordAtRowOne ;i < WIDTH; i++){
-          //if on the current row and horizontal position is in top rightmost range
-          if(grid[rowIndex][0] != "-" && verticalCursorPosition/10 === rowIndex-1  && horizontalCursorPosition/5 === i + 1){
-          //for cursor...goes on next row!
-          verticalCursorPosition = rowIndex * 10;
-          //horizontal positionis after the new total lower row of moved characters
-          horizontalCursorPosition = 0;
-          horizontalCursorPosition = ((lengthOfRightWordAtRowOne* 5) + (lengthOfFirstWordBottomRow*5));
-          //leave loop, cursor has been positioned
-          flagContainedInBorderCrossing = true
-          break
-        }
-            
-          }
-        //cursor wasn't repositioned yet. 
-        if (flagContainedInBorderCrossing === false){
-  
-          for(let i = 0; i< lengthOfFirstWordBottomRow; i++){
-            if(grid[rowIndex-1][WIDTH-1] != "-" && verticalCursorPosition/10 === rowIndex && horizontalCursorPosition/5 === i+1){
-              //no verticalcursorposition change, because the row index is already on bottom row
-              //set cursor after moved characters now on bottom
-              horizontalCursorPosition = ((lengthOfRightWordAtRowOne* 5) + (lengthOfFirstWordBottomRow*5));
-              //cursor moved, break out!
-              break
-            }
-          }
-        }
-  
-        /////
-        //Finally, set the row.
+    
+        // Handle the cursor repositioning logic.
+        this.repositionCursor(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
+    
+        // Set the new bottom row and fill in the moved text space with dashes on the top row.
         grid[rowIndex] = newBottomRow;
-        //fill in moved text space with dashes on top row
-        for (let i = WIDTH - lengthOfRightWordAtRowOne; i < WIDTH; i++) {
-          grid[rowIndex - 1][i] = "-";
-        }
-        
-        
-        console.log("2")
-        ///alert("2")
+        this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
+    
         this.pushWordsDoThisSecond(grid, newRemainder, rowIndex + 1, false);
         return grid;
-        } //ends fits in left hand slot
-  
-     
-      
-      //if here, word doesn't fit
+      }
+    
+      // If the word doesn't fit, continue with the next recursion.
       this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
       return grid;
     }
+    
+
+
+
+    
+
+
+
+
+    // Helper functions for better readability and separation of concerns.
+    
+    isOnLastLineWithoutDash(rowIndex, grid) {
+      return rowIndex !== 0 &&
+        grid[rowIndex][0] !== "-" &&
+        grid[rowIndex - 1][WIDTH - 1] !== "-" &&
+        rowIndex === HEIGHT - 1;
+    }
+    
+    findRightmostSpaceOrDash(row) {
+      let firstIndexOfNullOnBottomRow = row.indexOf("-");
+      let firstIndexOfSpaceOnBottomRow = row.indexOf(" ");
+      firstIndexOfNullOnBottomRow = firstIndexOfNullOnBottomRow === -1 ? 27 : firstIndexOfNullOnBottomRow;
+      firstIndexOfSpaceOnBottomRow = firstIndexOfSpaceOnBottomRow === -1 ? 27 : firstIndexOfSpaceOnBottomRow;
+    
+      return Math.min(firstIndexOfSpaceOnBottomRow, firstIndexOfNullOnBottomRow);
+    }
+    
+    countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow) {
+      let remainingNullSpaces = 0;
+      if (rowIndex !== HEIGHT - 1) {
+        for (let i = lengthOfFirstWordBottomRow; i < WIDTH - 1; i++) {
+          if (grid[rowIndex + 1][i] !== "-") break;
+          remainingNullSpaces++;
+        }
+      }
+      return remainingNullSpaces;
+    }
+    
+    shouldShortCircuit(grid, rowIndex) {
+      return rowIndex !== 0 &&
+        (grid[rowIndex - 1][WIDTH - 1] === "-" || grid[rowIndex][0] === "-");
+    }
+    
+    repositionCursor(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
+      let flagContainedInBorderCrossing = false;
+      for (let i = WIDTH - wordAtEndOfRowOne.length; i < WIDTH; i++) {
+        if (grid[rowIndex][0] !== "-" && verticalCursorPosition / 10 === rowIndex - 1 && horizontalCursorPosition / 5 === i + 1) {
+          verticalCursorPosition = rowIndex * 10;
+          horizontalCursorPosition = (wordAtEndOfRowOne.length * 5) + (firstWordBottomRow.length * 5);
+          flagContainedInBorderCrossing = true;
+          break;
+        }
+      }
+    
+      if (!flagContainedInBorderCrossing) {
+        for (let i = 0; i < firstWordBottomRow.length; i++) {
+          if (grid[rowIndex - 1][WIDTH - 1] !== "-" && verticalCursorPosition / 10 === rowIndex && horizontalCursorPosition / 5 === i + 1) {
+            horizontalCursorPosition = (wordAtEndOfRowOne.length * 5) + (firstWordBottomRow.length * 5);
+            break;
+          }
+        }
+      }
+    }
+    
+    fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne) {
+      for (let i = WIDTH - lengthOfRightWordAtRowOne; i < WIDTH; i++) {
+        grid[rowIndex - 1][i] = "-";
+      }
+    }
+
+
+
+
     splitAtIndex(arr, index) {
       //cuts array at index
       const front = arr.slice(0, index);
@@ -499,8 +475,10 @@ class RecursiveClass {
       //for displaying
       let horizString = (horizontalCursorPosition / 5).toString();
       let vertString = (verticalCursorPosition / 10).toString();
-      
-      
+      //when bottom row on right end has a character tha create ana additional row
+      if(grid[HEIGHT-1][WIDTH-1] != "-"){
+        this.createRow(grid, leftOverChar, rowIndex, colIndex);
+      }
       //these are the two rows we are using
       let topRow = grid[rowIndex];
       let lowerRow = grid[rowIndex + 1];
@@ -518,7 +496,7 @@ class RecursiveClass {
           this.createRow(grid, leftOverChar, rowIndex, colIndex);
         }
         CursorMovements.cursorRightOneSpace();
-        
+        console.log("1")
       }
       }else{
         //leftoverchar is now remiander, so it is added to the fromt
