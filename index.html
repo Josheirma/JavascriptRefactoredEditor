@@ -1,0 +1,329 @@
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Editor</title>
+  </head>
+  <body>
+  <script src="cursorMovements.js"></script>
+  <script src="newestRecursivs.js"></script>
+  <link rel= 'stylesheet' href='styles.css'>
+  
+  
+  <script>
+    //other classes
+    const CursorMovements = new CursorMovementsClass()
+    const Recursive = new RecursiveClass()
+    //starting dimensions
+    let STARTING_HORIZ = 200;
+    let STARTING_VERTI = 190 
+    let DASH = '-'
+    //dashes displayed instead of spaces
+    let areDashes = true;
+    </script>
+    
+    <canvas
+      id="canvas_id"
+      width=""
+      height= ""
+      style="border: 1px solid #550233"
+    > </canvas>
+    <!-- for displaying horizontal and vertical positioning-->
+    <div id="xAndY" style = "font-size:.55rem; margin-left:3rem;"></div>
+    
+    <!-- display in a column -->
+    <div style = "display:flex; margin-left:1.15rem; margin-bottom: 0rem; padding-bottom:0rem" >
+    <!-- button that allows for insert without inserting (directly on top of)-->
+      <button id = "insert" style = "padding-top:0rem; margin-top:.25rem; width:2rem; font-size: .4rem; margin-left:20px; " >Insert</button>
+      <!-- Button that displ;ays text with spaces instead of dashes-->
+      <button id = "areDashes" style = "margin-top:.25rem;  margin-left:.7rem;  font-size: .4rem; " >Show Without Dashes</button>
+      
+    </div>
+    
+  </div>
+  <script>
+  
+  //keep track of cursor location, horizontal step is 5, and vertical step is 10
+  let horizontalCursorPosition = 0
+  let verticalCursorPosition = 0
+  //Max rows before any create rows
+  let MAXROWS = 15
+  
+  
+    let gridArray = [
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "1" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "2" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+     
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+     
+    [DASH, DASH, DASH, DASH, DASH, "A" , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    ["B", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+         
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "4" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "1", "2" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "3", DASH ],
+         //["!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!","!", "!", "!", "!", "!" , "!" ],
+    ];
+
+    /*
+    let gridArray = [
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "1" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "2" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+     
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+     
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "3" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+         
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "4" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+         //["!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!","!", "!", "!", "!", "!" , "!" ],
+    ];
+    */
+  //canvas
+  //amount of dashes/spaces
+  let WIDTH = 28
+  let HEIGHT = 15
+  //columns
+  let ORIGINALHEIGHT = 15
+  //offset to space canvas for cursor
+  const VOFFSET = 32
+  const HOFFSET = 35
+  //get canvas element for handling
+  var canvas = document.getElementById('canvas_id')
+  //button
+  var insertOn = document.getElementById('insert')
+  //provides methods
+  let ctx = canvas.getContext('2d')
+  var insertOn = true
+  
+  function makeCanvas(verticalSize = 190, horizontalSize = 200){
+  canvas.style.width = horizontalSize + 'px'
+  canvas.style.height = verticalSize + 'px'
+  //for making crisper imaging
+  var scale = window.devicePixelRatio 
+  //scaled for better display
+  canvas.width = horizontalSize * scale
+  canvas.height = verticalSize * scale
+  ctx.scale(scale, scale)
+  //white
+  ctx.fillStyle = '#ffffff'
+  //erases
+  ctx.fillRect(0, 0, 200, 200)
+  ctx.font = '10px Monospace'
+  ctx.textAlign = 'center'
+ 
+  }
+  
+  //draws grid
+  function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
+    //finds number of extra rows
+    let extraHeightRows = HEIGHT - ORIGINALHEIGHT
+    //for each additional row, increase canvas height by ten
+    let totalVert = extraHeightRows*10 + STARTING_VERTI
+    makeCanvas(totalVert, STARTING_HORIZ)
+    //text
+    ctx.fillStyle = 'red'
+    ctx.fillText("Javascript Text Editor", 96 , 18)
+    //black text
+    ctx.fillStyle = 'black'
+    for (let i = 0; i < iValue; i++) {
+    for (let j = 0; j < jValue ; j++) {
+      ctx.fillText(gridArray[i][j], j * 5 + 30 , i * 10 + 33)
+      if(!gridArray || !gridArray[i] || !gridArray[i][j]){
+      console.log("bad array")
+      }
+      }
+  }
+ 
+}
+
+  //draws cursor on grid
+  function drawCursor(x,y){
+    
+    //28 tiles times 5 is 140
+    //if(x === HOFFSET + 140){
+      if(x == HOFFSET + (WIDTH * 5)){
+      x = 0 + HOFFSET;
+      y =y + 10
+    }
+    ctx.font = '10px Monospace'
+    ctx.fillStyle = 'red'
+    console.log("y: ", y)
+    ctx.fillText('_', x - 5, y)
+    }
+    //holds key pressed
+    let gKey = ''
+    //array that holds key code, (number)
+    var keyState = {}
+    //let eventKeyCode = ""
+    let down = false
+    //gets the handles of these two buttons
+    let inserting = document.getElementById('insert')
+    let dashing = document.getElementById('areDashes')
+    //sets up event handlers for both buttons
+     inserting.addEventListener('pointerdown', handleInsertButtonClick)
+     dashing.addEventListener('pointerdown', handleDashesButtonClick)
+     //Left as a regular function in case of need for release event listener
+     function handleInsertButtonClick(){
+      if (insertOn === true){
+      insertOn = false}
+      else{
+      insertOn = true
+      }
+        if(insertOn == true){
+          document.getElementById("insert").innerHTML = "Insert"
+        }else{
+          document.getElementById("insert").innerHTML = "On Top"
+        }
+
+    }
+    //Left as a regular function in case of need for release event listener
+    function handleDashesButtonClick(){
+
+      if(areDashes){
+        DASH = " "
+      }else{
+        DASH = "-"
+      }
+      //change dashes to spaces
+      if(areDashes){
+      //used to make a copy of array, so will have version with dashes
+      copyArray = gridArray.map(arr => [...arr])
+      for(let i = 0; i<HEIGHT; i++){
+        for(let j = 0; j < WIDTH ; j++){
+         //every dash is now a space
+         if ( gridArray[i][j] === "-"){
+          gridArray[i][j] = " " 
+         }
+        }
+        //sets boolena show dashes flag
+        areDashes = !areDashes
+      }
+    }
+    else{
+        //restore version with dashes
+        gridArray = copyArray.map(arr => [...arr])
+        //changes bvoolean flag for dispalying
+        areDashes = !areDashes
+      }
+     //change spaces to dashes - can't edit matrix until changed back to dashes (above).
+     if(areDashes == true){
+          document.getElementById("areDashes").innerHTML = "Show Without Dashes"
+        }else{
+          document.getElementById("areDashes").innerHTML = "Continue Coding"
+        }
+
+      drawGrid(HEIGHT, WIDTH)
+       
+      //are the dashes displaying (no cursor and grid when set to spaces, mode. )
+      if(!areDashes){
+    
+      }else{
+        Recursive.displayGridAndCursor()
+      }
+      
+    }
+
+    document.body.addEventListener('keydown', function(e){
+    //this key is set 
+    keyState[e.keyCode] = true
+    //sets the key that was pressed
+    gKey = e.key
+    //checks for another kepress
+    if (down) return
+    down = true
+    cursorAndFunctionCalls()
+    displayCursorLocations()
+    //just captures the event
+    }, false)
+
+    document.addEventListener('keyup', function(e){
+    //this key is unset
+    keyState[e.keyCode] = false;
+    //sets the key that was pressed
+    gKey = e.key
+    down = false
+    //justt captures the event
+    }, false)
+     
+    //these keys dont do anything
+    const preventKeys = [
+    'Tab', 'PageUp', 'PageDown', 'Home', 'End','Control', 'Alt', 'Meta', 'Shift', 'Escape'
+    ];
+    
+    function displayCursorLocations(){
+      let a = document.getElementById("xAndY")
+      a.innerHTML = 'Horizontal: ' + horizontalCursorPosition/5 + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + 'Vertical: '+ verticalCursorPosition/10
+
+    }
+
+    function cursorAndFunctionCalls(event) {
+    //displayCursorLocations()
+    //if an invalid keypress, returnn out
+    for (let i = 0; i < preventKeys.length;i++){
+      if( preventKeys[i] == gKey){
+        return
+      }
+    }
+    //right
+    if(keyState[39]){
+    CursorMovements.cursorRight() 
+    }
+    //left
+    else if(keyState[37]){
+      CursorMovements.cursorLeft()
+    }
+    //up
+    else if(keyState[38]){
+      CursorMovements.cursorUp()
+    }
+    //down
+    else if(keyState[40]){
+      CursorMovements.cursorDown()
+    } 
+    //these are the funcitons for keystorkes other than cursor movement keys
+    //else if (gKey === "-"){
+    //  return
+    //}
+    
+    else if(gKey === 'Delete' || gKey === 'Backspace')
+    {
+      gridArray = Recursive.deleteAndPullCharacters(verticalCursorPosition/10, horizontalCursorPosition/5,  gridArray)
+    }
+    else if(gKey == "Enter"){
+      gridArray = Recursive.pressedEnter(gridArray, verticalCursorPosition/10, horizontalCursorPosition/5, "",true, HEIGHT-1)
+    }
+    else if(gKey !== ""){
+    if(insertOn === true && gKey){
+    //this is a regular insert, moves text
+     gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition/10, horizontalCursorPosition/5, gridArray, gKey, true)
+     
+    }else{
+      //this is a destructive text on cursor
+      gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(verticalCursorPosition/10, horizontalCursorPosition/5, gridArray, gKey)
+    }
+    }
+    //This goes from row to row and fixes any pushes possible, over the border
+    //gridArray = Recursive.pushWordsDoThisSecond(gridArray, ["Z"], 0, true)
+    Recursive.displayGridAndCursor() 
+    }
+    cursorAndFunctionCalls(event)
+     </script>
+    </body>
