@@ -499,10 +499,8 @@ class RecursiveClass {
       //for displaying
       let horizString = (horizontalCursorPosition / 5).toString();
       let vertString = (verticalCursorPosition / 10).toString();
-      //when bottom row on right end has a character tha create ana additional row
-      if(grid[HEIGHT-1][WIDTH-1] != "-"){
-        //is.createRow(grid, leftOverChar, rowIndex, colIndex);
-      }
+      
+      
       //these are the two rows we are using
       let topRow = grid[rowIndex];
       let lowerRow = grid[rowIndex + 1];
@@ -520,15 +518,12 @@ class RecursiveClass {
           this.createRow(grid, leftOverChar, rowIndex, colIndex);
         }
         CursorMovements.cursorRightOneSpace();
-        console.log("1")
+        
       }
       }else{
         //leftoverchar is now remiander, so it is added to the fromt
       combineTopRow = [...leftOverChar, ...leftTopRow,  ...rightTopRow];
-      if(verticalCursorPosition/10 == rowIndex){
-        //CursorMovements.cursorRightOneSpace();
-        console.log("2")
-      }
+      
      
     }
       //get the firstt row of characters and the remiander to pass into the recursion
