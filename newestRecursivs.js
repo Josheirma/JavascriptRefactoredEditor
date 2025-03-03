@@ -117,15 +117,21 @@ class RecursiveClass {
     
       // If there's no row above, push an empty row and recurse.
       if (rowIndex === 0) {
-        this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
-        return grid;
+        //this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
+        //return grid;
       }
     
       let topRow = grid[rowIndex - 1];
-      let bottomRow = grid[rowIndex];
-    
+      let bottomRow = ""
+      if (newRemainder[0] !== "") {
+        bottomRow = [...newRemainder, ...grid[rowIndex]];
+      }else{
+        bottomRow = grid[rowIndex];
+      }
+    drawGrid(HEIGHT, WIDTH)
       // Get the word at the end of the top row.
       let wordAtEndOfRowOne = this.getLastSpaceOrNull(grid, topRow).rightSide;
+      let wordAtEndOfRowOne1 = this.getLastSpaceOrNull(grid, topRow).leftSide;
       let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
     
       // Handle the case where we are on the last line and certain conditions are met.
@@ -153,18 +159,28 @@ class RecursiveClass {
       // If the word fits below in the available space, combine and split rows.
       if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
         let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
-        const [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
-    
-        if (this.shouldShortCircuit(grid, rowIndex)) {
-          this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
-          return grid;
+        drawGrid(HEIGHT, WIDTH)
+        let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
+        //newRemainder = "test"
+        newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide;
+        if (!newRemainder){
+          newRemainder = "q"
         }
+        //get length of rightword
+
+
+
+        // if (this.shouldShortCircuit(grid, rowIndex)) {
+        //   this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
+        //   return grid;
+        // }
     
         // Handle the cursor repositioning logic.
         this.repositionCursor(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
     
         // Set the new bottom row and fill in the moved text space with dashes on the top row.
         grid[rowIndex] = newBottomRow;
+        drawGrid(HEIGHT, WIDTH)
         this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
     
         this.pushWordsDoThisSecond(grid, newRemainder, rowIndex + 1, false);
@@ -246,6 +262,11 @@ class RecursiveClass {
     }
 
 
+
+    //158
+    //newremainder find last null or space
+    //get that remainder
+    //add the remainder to the beginning of toprow
 
 
     splitAtIndex(arr, index) {
