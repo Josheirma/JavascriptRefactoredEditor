@@ -10,6 +10,7 @@ class RecursiveClass {
       this.bottomRowFromLastRound = [];
       this.tracksRow = 0;
       this.hasBeenInZeroHorizPosition = false;
+      this.FlagForFinalRow = true;
     }
   
     deleteRow(arr, rowNumber) {
@@ -107,18 +108,14 @@ class RecursiveClass {
     
     
     pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
-      if (rowIndex > HEIGHT - 1) return grid;
-    
-      // Handle the case of the last row and the last column.
-      if (rowIndex === HEIGHT - 1 && grid[HEIGHT - 1][WIDTH - 1] !== "-") {
-        // Perform necessary actions for the last row and column (commented out for now).
+      if(fromIndex){
+        this.FlagForFinalRow = true;
+      }
+      if (rowIndex > HEIGHT - 1){ 
         return grid;
       }
     
-      // If there's no row above, push an empty row and recurse.
       if (rowIndex === 0) {
-        //this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
-        //return grid;
       }
     
       let topRow = grid[rowIndex - 1];
@@ -128,18 +125,11 @@ class RecursiveClass {
       }else{
         bottomRow = grid[rowIndex];
       }
-    drawGrid(HEIGHT, WIDTH)
+      
       // Get the word at the end of the top row.
       let wordAtEndOfRowOne = this.getLastSpaceOrNull(grid, topRow).rightSide;
       let wordAtEndOfRowOne1 = this.getLastSpaceOrNull(grid, topRow).leftSide;
       let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
-    
-      // Handle the case where we are on the last line and certain conditions are met.
-      if (this.isOnLastLineWithoutDash(rowIndex, grid)) {
-        console.log("here");
-        // Perform actions for last line without dash (commented out for now).
-        return grid;
-      }
     
       // Find indices of spaces or dashes in the bottom row.
       let lastIndexOfFirstWord = this.findRightmostSpaceOrDash(bottomRow);
@@ -151,7 +141,7 @@ class RecursiveClass {
       let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
     
       // No room to push, continue with the next recursion.
-      if (remainingNullSpaces === 0) {
+      if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
         this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
         return grid;
       }
@@ -163,13 +153,7 @@ class RecursiveClass {
         let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
         //newRemainder = "test"
         newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide;
-        if (!newRemainder){
-          newRemainder = "q"
-        }
-        //get length of rightword
-
-
-
+       
         // if (this.shouldShortCircuit(grid, rowIndex)) {
         //   this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
         //   return grid;
@@ -183,7 +167,15 @@ class RecursiveClass {
         drawGrid(HEIGHT, WIDTH)
         this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
     
-        this.pushWordsDoThisSecond(grid, newRemainder, rowIndex + 1, false);
+        if(this.FlagForNewEndPush === true){
+
+          this.pushWordsDoThisSecond(grid, newRemainder, rowIndex, false);
+          this.FlagForNewEndPush = false;
+        }
+        else{
+          this.pushWordsDoThisSecond(grid, newRemainder, rowIndex + 1, false);
+        }
+
         return grid;
       }
     
@@ -192,22 +184,7 @@ class RecursiveClass {
       return grid;
     }
     
-
-
-
-    
-
-
-
-
     // Helper functions for better readability and separation of concerns.
-    
-    isOnLastLineWithoutDash(rowIndex, grid) {
-      return rowIndex !== 0 &&
-        grid[rowIndex][0] !== "-" &&
-        grid[rowIndex - 1][WIDTH - 1] !== "-" &&
-        rowIndex === HEIGHT - 1;
-    }
     
     findRightmostSpaceOrDash(row) {
       let firstIndexOfNullOnBottomRow = row.indexOf("-");
@@ -220,19 +197,19 @@ class RecursiveClass {
     
     countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow) {
       let remainingNullSpaces = 0;
-      if (rowIndex !== HEIGHT - 1) {
+      if (rowIndex !== HEIGHT) {
         for (let i = lengthOfFirstWordBottomRow; i < WIDTH - 1; i++) {
-          if (grid[rowIndex + 1][i] !== "-") break;
+          if (grid[rowIndex][i] !== "-") break;
           remainingNullSpaces++;
         }
       }
       return remainingNullSpaces;
     }
     
-    shouldShortCircuit(grid, rowIndex) {
-      return rowIndex !== 0 &&
-        (grid[rowIndex - 1][WIDTH - 1] === "-" || grid[rowIndex][0] === "-");
-    }
+    // shouldShortCircuit(grid, rowIndex) {
+    //   return rowIndex !== 0 &&
+    //     (grid[rowIndex - 1][WIDTH - 1] === "-" || grid[rowIndex][0] === "-");
+    // }
     
     repositionCursor(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
       let flagContainedInBorderCrossing = false;
@@ -449,6 +426,7 @@ class RecursiveClass {
         grid[rowIndex] = [...nextRowRightSideWithoutLeftChar];
         //cover with a dash character, because row is one elemnt less now
         grid[rowIndex][WIDTH - 1] = "-";
+
         return grid;
       }
        //Not on last row...(all this!)
