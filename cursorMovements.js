@@ -1,4 +1,4 @@
-//controls cursor movement changes and crosses over borders
+///controls cursor movement changes and crosses over borders
 //right and down is two positions per press, left and up are 1
 class CursorMovementsClass {
     cursorRight() {
