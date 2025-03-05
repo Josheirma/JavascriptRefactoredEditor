@@ -172,12 +172,6 @@
   //3/5/25 - add any missing funtionality, comment, and refactor 
   function drawCursor(x,y){
     
-    //28 tiles times 5 is 140
-    //if(x === HOFFSET + 140){
-      if(x == HOFFSET + (WIDTH * 5)){
-      x = 0 + HOFFSET;
-      y =y + 10
-    }
     ctx.font = '10px Monospace'
     ctx.fillStyle = 'red'
     console.log("y: ", y)
@@ -320,6 +314,7 @@
 
 
     // This function handles the cursor movements and function calls based on key presses
+    //3/5/25 - add any missing funtionality, comment, and refactor 
     function cursorAndFunctionCalls(event) {
     // Display the current cursor positions (this line is currently commented out)
     // displayCursorLocations();
