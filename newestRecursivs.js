@@ -137,7 +137,7 @@ lastLineWorkings(grid, rowIndex) {
 // Infinite Recursion Check	
 // newRemainder Reset	
 
-pushWordsToNextRow(grid, newRemainder, rowIndex, fromIndex) {
+pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   if (fromIndex) {
     this.FlagForFinalRow = true;
   }
@@ -159,7 +159,7 @@ pushWordsToNextRow(grid, newRemainder, rowIndex, fromIndex) {
   let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
 
   if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
-    return this.pushWordsToNextRow(grid, [""], rowIndex + 1, false);
+    return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
   }
 
   if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
@@ -178,10 +178,10 @@ pushWordsToNextRow(grid, newRemainder, rowIndex, fromIndex) {
     let nextRowIndex = this.FlagForNewEndPush ? rowIndex : rowIndex + 1;
     this.FlagForNewEndPush = false;
 
-    return this.pushWordsToNextRow(grid, newRemainder, nextRowIndex, false);
+    return this.pushWordsDoThisSecond(grid, newRemainder, nextRowIndex, false);
   }
 
-  return this.pushWordsToNextRow(grid, [""], rowIndex + 1, false);
+  return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
 }
 
 // - missing functionality
