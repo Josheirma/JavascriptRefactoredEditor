@@ -12,37 +12,38 @@
   
   
   <script>
-    //other classes
-    const CursorMovements = new CursorMovementsClass()
-    const Recursive = new RecursiveClass()
-    //starting dimensions
-    let STARTING_HORIZ = 200;
-    let STARTING_VERTI = 190 
-    let DASH = '-'
-    //dashes displayed instead of spaces
-    let areDashes = true;
-    </script>
+    // Initialize the classes for cursor movement and recursion (assumed to be defined elsewhere)
+    const CursorMovements = new CursorMovementsClass();
+    const Recursive = new RecursiveClass();
+
+    // Starting dimensions for the cursor movement
+    let STARTING_HORIZ = 200;  // Starting position on the X-axis
+    let STARTING_VERTI = 190;   // Starting position on the Y-axis
+
+    // Dash character to replace spaces for display
+    let DASH = '-';
+    let areDashes = true; // Flag to toggle dash display instead of spaces
+</script>
+
+<!-- Canvas element for rendering content -->
+<canvas id="canvas_id" width="" height="" style="border: 1px solid #550233;"></canvas>
+
+<!-- Display horizontal and vertical positioning -->
+<div id="xAndY" style="font-size: .55rem; margin-left: 3rem;"></div>
+
+<!-- Container for buttons displayed in a column layout -->
+<div style="display: flex; margin-left: 1.15rem; margin-bottom: 0; padding-bottom: 0;">
+    <!-- Button for inserting content directly on top of the canvas -->
+    <button id="insert" style="padding-top: 0; margin-top: .25rem; width: 2rem; font-size: .4rem; margin-left: 20px;">
+        Insert
+    </button>
     
-    <canvas
-      id="canvas_id"
-      width=""
-      height= ""
-      style="border: 1px solid #550233"
-    > </canvas>
-    <!-- for displaying horizontal and vertical positioning-->
-    <div id="xAndY" style = "font-size:.55rem; margin-left:3rem;"></div>
-    
-    <!-- display in a column -->
-    <div style = "display:flex; margin-left:1.15rem; margin-bottom: 0rem; padding-bottom:0rem" >
-    <!-- button that allows for insert without inserting (directly on top of)-->
-      <button id = "insert" style = "padding-top:0rem; margin-top:.25rem; width:2rem; font-size: .4rem; margin-left:20px; " >Insert</button>
-      <!-- Button that displ;ays text with spaces instead of dashes-->
-      <button id = "areDashes" style = "margin-top:.25rem;  margin-left:.7rem;  font-size: .4rem; " >Show Without Dashes</button>
-      
-    </div>
-    
-  </div>
-  <script>
+    <!-- Button to toggle between showing spaces and dashes -->
+    <button id="areDashes" style="margin-top: .25rem; margin-left: .7rem; font-size: .4rem;">
+        Show Without Dashes
+    </button>
+</div>
+<script>
   
   //keep track of cursor location, horizontal step is 5, and vertical step is 10
   let horizontalCursorPosition = 0
@@ -95,42 +96,62 @@
          //["!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!","!", "!", "!", "!", "!" , "!" ],
     ];
     */
-  //canvas
-  //amount of dashes/spaces
-  let WIDTH = 28
-  let HEIGHT = 15
-  //columns
-  let ORIGINALHEIGHT = 15
-  //offset to space canvas for cursor
-  const VOFFSET = 32
-  const HOFFSET = 35
-  //get canvas element for handling
-  var canvas = document.getElementById('canvas_id')
-  //button
-  var insertOn = document.getElementById('insert')
-  //provides methods
-  let ctx = canvas.getContext('2d')
-  var insertOn = true
-  
-  function makeCanvas(verticalSize = 190, horizontalSize = 200){
-  canvas.style.width = horizontalSize + 'px'
-  canvas.style.height = verticalSize + 'px'
-  //for making crisper imaging
-  var scale = window.devicePixelRatio 
-  //scaled for better display
-  canvas.width = horizontalSize * scale
-  canvas.height = verticalSize * scale
-  ctx.scale(scale, scale)
-  //white
-  ctx.fillStyle = '#ffffff'
-  //erases
-  ctx.fillRect(0, 0, 200, 200)
-  ctx.font = '10px Monospace'
-  ctx.textAlign = 'center'
+  // Canvas configuration
+// Dimensions for dashes/spaces grid
+const WIDTH = 28;
+const HEIGHT = 15;
+
+// Column-related constants
+const ORIGINALHEIGHT = 15;
+
+// Offsets to space the canvas for cursor positioning
+const VOFFSET = 32;
+const HOFFSET = 35;
+
+// Get the canvas element for handling
+const canvas = document.getElementById('canvas_id');
+
+// Get the insert button
+const insertOnButton = document.getElementById('insert');
+
+// Canvas context for drawing
+const ctx = canvas.getContext('2d');
+
+// Initial state for the insert button
+let insertOn = true;
+
+// Function to initialize the canvas size and appearance
+//3/5/25 - add any missing funtionality, comment, and refactor 
+function makeCanvas(verticalSize = 190, horizontalSize = 200) {
+    // Set canvas display size
+    canvas.style.width = `${horizontalSize}px`;
+    canvas.style.height = `${verticalSize}px`;
+
+    // For crisper imaging on high DPI screens
+    const scale = window.devicePixelRatio;
+
+    // Set the canvas' internal resolution to match the display size, scaled for better display
+    canvas.width = horizontalSize * scale;
+    canvas.height = verticalSize * scale;
+
+    // Apply scaling to match the display resolution
+    ctx.scale(scale, scale);
+
+    // Set canvas background to white
+    ctx.fillStyle = '#ffffff';
+
+    // Clear canvas (white background)
+    ctx.fillRect(0, 0, 200, 200);
+
+    // Set font and text alignment
+    ctx.font = '10px Monospace';
+    ctx.textAlign = 'center';
+}
  
-  }
+  
   
   //draws grid
+  //3/5/25 - add any missing funtionality, comment, and refactor 
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
     // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
     if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
@@ -268,27 +289,36 @@
 
     
 
-    document.body.addEventListener('keydown', function(e){
-    //this key is set 
-    keyState[e.keyCode] = true
-    //sets the key that was pressed
-    gKey = e.key
-    //checks for another kepress
-    if (down) return
-    down = true
-    cursorAndFunctionCalls()
-    displayCursorLocations()
-    //just captures the event
-    }, false)
+   document.body.addEventListener('keydown', function (e) {
+    // Mark the key as pressed based on its keyCode
+    keyState[e.keyCode] = true;
 
-    document.addEventListener('keyup', function(e){
-    //this key is unset
+    // Store the key that was pressed
+    gKey = e.key;
+
+    // Prevent multiple keydown events from triggering simultaneously
+    if (down) return;
+    down = true;
+
+    // Call functions related to cursor movement and other actions
+    cursorAndFunctionCalls();
+    displayCursorLocations();
+
+    // The event is simply captured and handled here
+    }, false);
+
+    document.addEventListener('keyup', function (e) {
+    // Mark the key as released based on its keyCode
     keyState[e.keyCode] = false;
-    //sets the key that was pressed
-    gKey = e.key
-    down = false
-    //justt captures the event
-    }, false)
+
+    // Store the key that was released
+    gKey = e.key;
+
+    // Reset the down flag as the key is no longer pressed
+    down = false;
+
+    // Simply captures the event
+    }, false);
      
     //these keys dont do anything
     const preventKeys = [
