@@ -11,7 +11,7 @@ class RecursiveClass {
       this.hasBeenInZeroHorizPosition = false;
       this.FlagForFinalRow = true;
     }
-    // Deletes a row from the array at the specified rowNumber index
+// Deletes a row from the array at the specified rowNumber index
 deleteRow(arr, rowNumber) {
   // Ensure rowNumber is within valid bounds
   if (rowNumber >= 0 && rowNumber < arr.length) {
@@ -25,6 +25,7 @@ deleteRow(arr, rowNumber) {
 
 
   // Adds a new row with placeholder values to the grid at the specified rowIndex
+  //3/5/25 - chatGPT
   createRow(grid, rowIndex) {
   // Define a new row with placeholders ("-") for each column
   const newRow = [
