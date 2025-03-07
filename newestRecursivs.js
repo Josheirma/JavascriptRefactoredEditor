@@ -431,27 +431,29 @@ splitAtIndex(arr, index) {
       return grid;
     }
     
-    handleLastRow(rowIndex, columnIndex, grid) {
-      let topRow = grid[rowIndex];
-      let combine = [];
+    //3/7/25
+    // handleLastRow(rowIndex, columnIndex, grid) {
+    //   let topRow = grid[rowIndex];
+    //   let combine = [];
       
-      if (columnIndex !== 0) {
-        let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
-        let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
-        combine = [...topRowLeft, ...topRowRightWithoutFirst];
-      } else {
-        let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
-        let [leftChrRemoved, rightAfterFirst] = this.splitAtIndex(topRowRight, 1);
-        combine = [...rightAfterFirst];
-        grid[HEIGHT - 2][WIDTH - 1] = grid[HEIGHT - 1][0];
-      }
+    //   if (columnIndex !== 0) {
+    //     let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
+    //     let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
+    //     combine = [...topRowLeft, ...topRowRightWithoutFirst];
+    //   } else {
+    //     let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
+    //     let [leftChrRemoved, rightAfterFirst] = this.splitAtIndex(topRowRight, 1);
+    //     combine = [...rightAfterFirst];O
     
-      CursorMovements.cursorLeft();
-      grid[rowIndex] = combine;
-      grid[HEIGHT - 1][WIDTH - 1] = "-";
+    //     grid[HEIGHT - 2][WIDTH - 1] = grid[HEIGHT - 1][0];
+    //   }
+    
+    //   CursorMovements.cursorLeft();
+    //   grid[rowIndex] = combine;
+    //   grid[HEIGHT - 1][WIDTH - 1] = "-";
       
-      return grid;
-    }
+    //   return grid;
+    // }
     
     handleOtherRows(rowIndex, columnIndex, grid) {
       let topRow = grid[rowIndex];
@@ -507,6 +509,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     return grid;
   }
 
+  let bottomRow = []
   // Handle the case when we're at the second-to-last row (this will move the character to the right most position of the top row)
   if (rowIndex > HEIGHT - 2) {
     let currentRow = grid[rowIndex - 1];
@@ -517,16 +520,17 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     let [nextRowLeftCharacter, nextRowWithoutLeftChar] = this.splitAtIndex(nextRow, 1);
     
     // Add the character from the bottom row to the rightmost position of the top row
-    grid[rowIndex - 1] = [...currentRowWithoutLeftChar, nextRowLeftCharacter];
+    grid[rowIndex - 1] = [...currentRow, ...nextRowLeftCharacter];
     
     // Set the last character of the current row to the left character of the bottom row
-    grid[rowIndex - 1][WIDTH - 1] = nextRowLeftCharacter;
-    
+    //grid[rowIndex - 1][WIDTH - 1] = nextRowLeftCharacter[0];
+    //grid[rowIndex - 1][WIDTH - 1] = "-";
     // Set the bottom row to the updated row, with the left character removed
     grid[rowIndex] = [...nextRowWithoutLeftChar];
     
     // Mark the new rightmost character in the bottom row as a placeholder dash
-    grid[rowIndex][WIDTH - 1] = "-";
+    //grid[rowIndex][0] = "-";
+    grid[HEIGHT-1][WIDTH-1] = "-";
     drawGrid(HEIGHT, WIDTH)
     
     return grid;
@@ -534,7 +538,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
 
   // For rows that are not the last row
   let topRow = grid[rowIndex - 1];
-  let bottomRow = grid[rowIndex];
+  bottomRow = grid[rowIndex];
   
   // Get the leftmost character from the bottom row (this will be added to the rightmost side of the top row)
   let leftCharacterOfBottomRow = bottomRow[0];
@@ -556,9 +560,14 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   // Update the grid with the new top row
   grid[rowIndex - 1] = newTopRow;
   
-  // Update the grid with the updated bottom row
-  grid[rowIndex] = [...bottomRowWithoutLeftCharacter];
-  
+  if(rowIndex === HEIGHT-1){
+    grid[rowIndex] = [...bottomRow]
+     
+  }
+  else{
+    // Update the grid with the updated bottom row
+    grid[rowIndex] = [...bottomRowWithoutLeftCharacter];
+  }
   // Recursively call the function to handle the next row
   this.removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex + 1, columnIndex, grid);
 
