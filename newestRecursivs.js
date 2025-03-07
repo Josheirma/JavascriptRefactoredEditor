@@ -265,55 +265,6 @@ splitAtIndex(arr, index) {
   return [arr.slice(0, index), arr.slice(index)];
 }
 
-
-
-
-    //3/4/25 - ChatGpt
-    // - missing fucnitonality
-    // Bounds Checking	
-    // Remaining Spaces Filling		✅
-    // Cursor Repositioning	
-    // Recursive Continuation	
-    // Grid Overflow Protection
-    divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder) {
-      this.incrementRowTracking();
-      
-      // Handle the base case to stop recursion
-      if (this.handleBaseCase(rowIndex)) {
-        drawGrid(HEIGHT, WIDTH);
-        return grid;
-      }
-    
-      // Get the rows to split
-      const { bottomRow, topRow } = this.getRowsToSplit(grid, rowIndex);
-    
-      // Split the rows at colIndex
-      const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
-      const [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
-    
-      // Combine the rows with the remainder
-      const buildNextRow = this.combineRowsWithRemainder(bottomRightRow, topRow, remainder);
-    
-      // Adjust the row for the specified width and add dashes if necessary
-      const [oneRowsWorth, newRemainder] = this.adjustRowForWidth(buildNextRow);
-    
-      // Update the grid with the adjusted row
-      this.updateGridRow(grid, rowIndex, oneRowsWorth);
-    
-      // Reposition the cursor if needed
-      this.repositionCursor(rowIndex, oneRowsWorth);
-    
-      // Recursive call if there is still a remainder
-      if (newRemainder.length > 0) {
-        this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
-      }
-    
-      // Draw the horizontal line
-      this.drawHorizontalLine(grid, rowIndex, colIndex);
-    
-      return grid;
-    }
-    
     // Helper function to increment row tracking
     incrementRowTracking() {
       this.tracksRow++;
@@ -333,7 +284,7 @@ splitAtIndex(arr, index) {
     
     // Helper function to combine rows with the remainder
     combineRowsWithRemainder(bottomRightRow, topRow, remainder) {
-      if (remainder.length > 0) {
+      if (remainder.length > 0 && remainder[0] !== "") {
         return [...remainder, ...topRow];
       } else {
         return [...bottomRightRow, ...topRow];
@@ -384,7 +335,7 @@ splitAtIndex(arr, index) {
     // Recursion Stop Condition
     pressedEnter(grid, rowIndex, colIndex, remainder, IsFirstTime, counter) {
       // Base case: Prevent overflow if the cursor moves beyond grid height
-      if (rowIndex >= HEIGHT - 1) return grid;
+      if (rowIndex >  HEIGHT - 1) return grid;
     
       // Create a new row at the specified row index
       this.createRow(grid, rowIndex);
@@ -415,6 +366,52 @@ splitAtIndex(arr, index) {
     
       // Recursive call if content still remains
       return this.pressedEnter(grid, rowIndex + 1, colIndex, remainder, false, counter + 1);
+    }
+
+     //3/4/25 - ChatGpt
+    // - missing fucnitonality
+    // Bounds Checking	
+    // Remaining Spaces Filling		✅
+    // Cursor Repositioning	
+    // Recursive Continuation	
+    // Grid Overflow Protection
+    divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder) {
+      this.incrementRowTracking();
+      
+      // Handle the base case to stop recursion
+      if (this.handleBaseCase(rowIndex)) {
+        drawGrid(HEIGHT, WIDTH);
+        return grid;
+      }
+    
+      // Get the rows to split
+      const { bottomRow, topRow } = this.getRowsToSplit(grid, rowIndex);
+    
+      // Split the rows at colIndex
+      const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
+      const [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
+    
+      // Combine the rows with the remainder
+      const buildNextRow = this.combineRowsWithRemainder(bottomRightRow, topRow, remainder);
+    
+      // Adjust the row for the specified width and add dashes if necessary
+      const [oneRowsWorth, newRemainder] = this.adjustRowForWidth(buildNextRow);
+    
+      // Update the grid with the adjusted row
+      this.updateGridRow(grid, rowIndex, oneRowsWorth);
+    
+      // Reposition the cursor if needed
+      this.repositionCursor(rowIndex, oneRowsWorth);
+    
+      // Recursive call if there is still a remainder
+      if (newRemainder.length > 0) {
+        this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
+      }
+    
+      // Draw the horizontal line
+      this.drawHorizontalLine(grid, rowIndex, colIndex);
+    
+      return grid;
     }
     
 
