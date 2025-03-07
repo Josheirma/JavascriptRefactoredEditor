@@ -3,18 +3,18 @@
 class CursorMovementsClass {
   cursorRight() {
     // Check if the cursor has reached the maximum allowed position (based on grid width and height)
-    if (horizontalCursorPosition / 5 >= WIDTH - 1 && verticalCursorPosition / 10 >= HEIGHT - 1) {
+    if (horizontalCursorPosition / 5 >= (WIDTH - 1) && verticalCursorPosition / 10 >= (HEIGHT - 1)) {
         return;
     }
 
     // If the horizontal position exceeds the canvas width, reset horizontal position and move down vertically
-    if (horizontalCursorPosition >= WIDTH * 5) {
-        horizontalCursorPosition = 10;
+    if (horizontalCursorPosition >= (WIDTH - 1) * 5) {
+        horizontalCursorPosition = 5;
         verticalCursorPosition += 10;
     } 
     // If the horizontal position is near the end of the width, reset horizontal position and move down vertically
-    else if (horizontalCursorPosition >= WIDTH * 5 - 5) {
-        horizontalCursorPosition = 5;
+    else if (horizontalCursorPosition >= (WIDTH -1) * 5 - 5) {
+        horizontalCursorPosition = 0;
         verticalCursorPosition += 10;
     } 
     // Otherwise, simply move the cursor to the right
