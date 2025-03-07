@@ -30,13 +30,15 @@ deleteRow(arr, rowNumber) {
   // Define a new row with placeholders ("-") for each column
   const newRow = [
     "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", 
-    "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"
+    "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"
   ];
 
   // Insert the new row at the specified rowIndex
   //grid.splice(rowIndex, 0, newRow);
 
-  grid.push(["-", "-", "-", "-", "-", "-" , "-", "-", "-", "-", "-", "-", "-" , "-", "-", "-", "-", "-", "-", "-" , "-","-", "-", "-", "-", "-", "-" , "-" ]),
+  grid.push(newRow);
+    
+    //["-", "-", "-", "-", "-", "-" , "-", "-", "-", "-", "-", "-", "-" , "-", "-", "-", "-", "-", "-", "-" , "-","-", "-", "-", "-", "-", "-" , "-" ]),
     
   // Increment HEIGHT to reflect the new row added to the grid
   HEIGHT++;
@@ -349,7 +351,7 @@ splitAtIndex(arr, index) {
       horizontalCursorPosition = 0;
     
       // Move vertical cursor down only if it's not the first-time press
-      if (!IsFirstTime) {
+      if (1) {
         verticalCursorPosition += 10;
       }
     
