@@ -146,7 +146,6 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   if (fromIndex) {
     this.FlagForFinalRow = true;
   }
-
   if (rowIndex >= HEIGHT) return grid; // Base case to stop recursion
 
   let topRow = grid[rowIndex - 1] || [];
@@ -154,8 +153,6 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
   let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrNull(grid, topRow);
   let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
-
-
 
   //last index of first word used on bottom
   let lastIndexOfFirstWord = this.findLeftmostSpaceOrDash(bottomRow);
@@ -171,23 +168,37 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   }
 
   if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
+
     let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
     drawGrid(HEIGHT, WIDTH);
-
     let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
+    
+    //-12
     newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide || [];
-
+    let lengthOfNewRemainder = newRemainder.length
+    
+    
+    //put dashes here with for loop
+    //remove total of bottom left word length
+    //combine total left word with remaining row
+    let wordAtEndOfRowOnelength = wordAtEndOfRowOne.length
+    let firstWordBottomRowLength = firstWordBottomRow.length
+    let totalLeftSidePhraseLength = wordAtEndOfRowOnelength + firstWordBottomRowLength
+    let [leftmostTotalWordThatIsRemoved, restOfBottomRowWithoutLeftWord] = this.splitAtIndex(bottomRow, totalLeftSidePhraseLength);
+    let combinedLowerRow = [...wordAtEndOfRowOne , ...firstWordBottomRow, ...restOfBottomRowWithoutLeftWord]
+    
     this.repositionCursorForPush(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
-    grid[rowIndex] = newBottomRow;
+    //grid[rowIndex] = newBottomRow;
+    grid[rowIndex] = combinedLowerRow;
     drawGrid(HEIGHT, WIDTH);
-
     this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
 
     let nextRowIndex = this.FlagForNewEndPush ? rowIndex : rowIndex + 1;
     this.FlagForNewEndPush = false;
 
-    return this.pushWordsDoThisSecond(grid, newRemainder, nextRowIndex, false);
+    return this.pushWordsDoThisSecond(grid, [""], nextRowIndex, false);
   }
+
 
   return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
 }
@@ -220,8 +231,12 @@ repositionCursorForPush(grid,rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
   if (this.handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow)) return;
   this.handleCursorInBottomRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
 }
+
+
+
 // - missing functionality
 handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
+  
   // Ensure we're within bounds of the top row and the cursor is properly aligned
   for (let i = WIDTH - wordAtEndOfRowOne.length; i < WIDTH; i++) {
     if (grid[rowIndex][0] !== "-" && verticalCursorPosition / 10 === rowIndex - 1 && horizontalCursorPosition / 5 === i + 1) {
@@ -229,8 +244,11 @@ handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
       horizontalCursorPosition = (wordAtEndOfRowOne.length + firstWordBottomRow.length) * 5;  // Move cursor after combined word
       return true;
     }
-    else{
+    else if (grid[rowIndex][0] !== "-" && verticalCursorPosition / 10 === rowIndex  && horizontalCursorPosition / 5 === 0) {
 
+      const lengthOfCompleteWordOnBottomLeft =  wordAtEndOfRowOne.length + firstWordBottomRow.length
+      horizontalCursorPosition = (lengthOfCompleteWordOnBottomLeft-1) * 5 + 5;
+      drawGrid(HEIGHT, WIDTH)
     }
   }
   return false;
