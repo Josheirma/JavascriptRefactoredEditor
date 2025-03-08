@@ -177,7 +177,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
     newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide || [];
 
-    this.repositionCursor(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
+    this.repositionCursorForPush(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
     grid[rowIndex] = newBottomRow;
     drawGrid(HEIGHT, WIDTH);
 
@@ -216,7 +216,7 @@ countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
 }
 
 // - missing functionality
-repositionCursor(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
+repositionCursorForPush(grid,rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
   if (this.handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow)) return;
   this.handleCursorInBottomRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
 }
@@ -229,6 +229,9 @@ handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
       horizontalCursorPosition = (wordAtEndOfRowOne.length + firstWordBottomRow.length) * 5;  // Move cursor after combined word
       return true;
     }
+    else{
+
+    }
   }
   return false;
 }
@@ -238,7 +241,7 @@ handleCursorInBottomRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
   for (let i = 0; i < firstWordBottomRow.length; i++) {
     // Check if we're in the right position and not in a dash
     if (grid[rowIndex - 1][WIDTH - 1] !== "-" && verticalCursorPosition / 10 === rowIndex && horizontalCursorPosition / 5 === i + 1) {
-      horizontalCursorPosition = (wordAtEndOfRowOne.length + firstWordBottomRow.length) * 5; // Move cursor to combined word's end
+      horizontalCursorPosition = (wordAtEndOfRowOne.length + firstWordBottomRow.length) * 5 ; // Move cursor to combined word's end
       break;
     }
   }
@@ -314,7 +317,7 @@ splitAtIndex(arr, index) {
     // Helper function to reposition the cursor
     repositionCursor(rowIndex, oneRowsWorth) {
       if (rowIndex === Math.floor(verticalCursorPosition / 10)) {
-        horizontalCursorPosition = oneRowsWorth.length * 5;
+        horizontalCursorPosition = oneRowsWorth.length * 5 + 5;
       }
     }
     
@@ -603,8 +606,8 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
       // Edge Case: Create a new row if bottom-right character is not a dash
       if (grid[HEIGHT - 1][WIDTH - 1] !== "-") {
         this.createRow(grid, leftOverChar, rowIndex, colIndex);
-        horizontalCursorPosition = 0;
-        verticalCursorPosition += 10; // Move cursor to new row
+        //horizontalCursorPosition = 0;
+        //verticalCursorPosition += 10; // Move cursor to new row
         drawGrid(HEIGHT, WIDTH);
       }
     
@@ -619,6 +622,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
         combinedRow = [...leftTopRow, ...leftOverChar, ...rightTopRow];
       } else {
         combinedRow = [...leftOverChar, ...leftTopRow, ...rightTopRow];
+        
       }
     
       let [finishedRow, remainder] = this.splitAtIndex(combinedRow, WIDTH);
