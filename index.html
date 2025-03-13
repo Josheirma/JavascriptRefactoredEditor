@@ -107,7 +107,7 @@ const ORIGINALHEIGHT = 15;
 // Offsets to space the canvas for cursor positioning
 const VOFFSET = 32;
 const HOFFSET = 35;
-
+let copy2DimArray = [];
 // Get the canvas element for handling
 const canvas = document.getElementById('canvas_id');
 
@@ -181,6 +181,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
             // Check if the current grid cell exists and is valid
             let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : ""; // Default to empty string if invalid
             // Calculate the x and y positions based on the grid layout
+            //!
             let xPos = j * 5 + 30;
             let yPos = i * 10 + 33;
             // Render the text in the canvas at calculated positions
@@ -195,7 +196,6 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     
     ctx.font = '10px Monospace'
     ctx.fillStyle = 'red'
-    console.log("y: ", y)
     ctx.fillText('_', x - 5, y)
     }
 
@@ -204,7 +204,6 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     let gKey = ''
     //array that holds key code, (number)
     var keyState = {}
-    //let eventKeyCode = ""
     let down = false
     //gets the handles of these two buttons
     let inserting = document.getElementById('insert')
@@ -248,7 +247,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // If currently displaying dashes, change grid content to spaces
     if (areDashes) {
         // Save a deep copy of the current grid state (with dashes) for future restoration
-        copyArray = gridArray.map(arr => [...arr]);
+        copy2DimArray = gridArray.map(arr => [...arr]);
 
         // Loop through the grid and replace all dashes with spaces
         for (let i = 0; i < HEIGHT; i++) {
@@ -264,7 +263,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
     } else {
         // If currently displaying spaces, restore the grid state with dashes
-        gridArray = copyArray.map(arr => [...arr]);
+        gridArray = copy2DimArray.map(arr => [...arr]);
 
         // Toggle the areDashes flag to indicate we are now showing dashes
         areDashes = !areDashes;
@@ -280,10 +279,8 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // Redraw the grid based on the current display mode (dashes or spaces)
     drawGrid(HEIGHT, WIDTH);
 
-    // If dashes are being displayed, recursively update grid and cursor for display
-    if (areDashes) {
         Recursive.displayGridAndCursor();
-    }
+    
 }
 
 

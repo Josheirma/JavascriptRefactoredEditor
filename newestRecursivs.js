@@ -33,35 +33,17 @@ deleteRow(arr, rowNumber) {
     "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"
   ];
 
-  // Insert the new row at the specified rowIndex
-  //grid.splice(rowIndex, 0, newRow);
-
   grid.push(newRow);
-    
-    //["-", "-", "-", "-", "-", "-" , "-", "-", "-", "-", "-", "-", "-" , "-", "-", "-", "-", "-", "-", "-" , "-","-", "-", "-", "-", "-", "-" , "-" ]),
-    
+  
   // Increment HEIGHT to reflect the new row added to the grid
   HEIGHT++;
-
-  // Optionally, trigger the drawGrid function if necessary (currently commented out)
-  // drawGrid(HEIGHT, WIDTH);
-
   // Return the modified grid with the newly added row
   return grid;
 }
 
 
 //3/4/25 chatGPT 
-
-  //row does not have a space or dash
-  //   if (maxIndexOfNullOrString === -1) {
-  //     const left = ""
-  //     const rightWordAtEndOfRowOne = ""
-  //     for(let i = 0; i < WIDTH-1; i++ )
-  //     rightWordAtEndOfRowOne[i] = "-"
-  //   }
-
-// Finds the last occurrence of a space or dash in the row and splits the row accordingly
+//Finds the last occurrence of a space or dash in the row and splits the row accordingly
 //3/4/25 ChatGpt - fixed too
 getLastSpaceOrNull(grid, topRow) {
   // Get the index of the last dash and the last space
@@ -78,63 +60,6 @@ getLastSpaceOrNull(grid, topRow) {
 }
 
 
-//3/4/25  ChatGPT - PRESENTLY, NOT USED.  If needed, search missing functuality with code!
-// Merges the right word from the top row with the left word from the bottom row
-// and adjusts the grid accordingly
-lastLineWorkings(grid, rowIndex) {
-  // Return grid if the rowIndex is out of bounds
-  if (rowIndex <= 0 || rowIndex >= grid.length) return grid;
-
-  // Get the rows involved: top row and bottom row
-  const topRow = grid[rowIndex - 1];
-  const bottomRow = grid[rowIndex];
-
-  // Find the index of the last dash in the top row (start of the right word)
-  const lastIndexOfDashOnTopRow = topRow.lastIndexOf("-");
-
-  // Split the top row into left part and the right word
-  const [leftOfWordTopRow, rightWordTopRow] = this.splitAtIndex(
-    topRow,
-    lastIndexOfDashOnTopRow + 1
-  );
-
-  // Find the index of the first dash in the bottom row (start of the left word)
-  const firstIndexOfDashOnBottomRow = bottomRow.indexOf("-");
-
-  // Split the bottom row into left word and the remaining right side
-  const [leftWordBottomRow, rightSide] = this.splitAtIndex(
-    bottomRow,
-    firstIndexOfDashOnBottomRow
-  );
-
-  // Combine the right word from the top row and the left word from the bottom row
-  const combinedRow = [...rightWordTopRow, ...leftWordBottomRow];
-  
-  // Update the bottom row with the combined result
-  grid[rowIndex] = combinedRow;
-
-  // Set the horizontal cursor position based on the combined row length
-  horizontalCursorPosition = combinedRow.length * 5;
-
-  // Fill the rest of the bottom row with dashes after the combined word
-  for (let i = combinedRow.length; i < WIDTH; i++) {
-    grid[rowIndex][i] = "-";
-  }
-
-  // Replace the part of the top row where the word was, with dashes
-  for (let i = WIDTH - rightWordTopRow.length; i < WIDTH; i++) {
-    grid[rowIndex - 1][i] = "-";
-  }
-
-  return grid;
-}
-    
-
-
-
-
-
-
 // 3/3/25 - ChatGPT
 // Global Flag Initialization	
 // splitAtIndex() Fallback	
@@ -149,6 +74,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   if (rowIndex >= HEIGHT) return grid; // Base case to stop recursion
 
   let topRow = grid[rowIndex - 1] || [];
+  //!
   let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
 
   let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrNull(grid, topRow);
@@ -163,6 +89,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
   let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
 
+  //@
   if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
     return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
   }
@@ -173,22 +100,13 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     drawGrid(HEIGHT, WIDTH);
     let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
     
-    //-12
+    //!
     newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide || [];
     let lengthOfNewRemainder = newRemainder.length
-    
-    
-    //put dashes here with for loop
-    //remove total of bottom left word length
-    //combine total left word with remaining row
-    let wordAtEndOfRowOnelength = wordAtEndOfRowOne.length
-    let firstWordBottomRowLength = firstWordBottomRow.length
-    let totalLeftSidePhraseLength = wordAtEndOfRowOnelength + firstWordBottomRowLength
+    let totalLeftSidePhraseLength = lengthOfRightWordAtRowOne + lengthOfFirstWordBottomRow
     let [leftmostTotalWordThatIsRemoved, restOfBottomRowWithoutLeftWord] = this.splitAtIndex(bottomRow, totalLeftSidePhraseLength);
     let combinedLowerRow = [...wordAtEndOfRowOne , ...firstWordBottomRow, ...restOfBottomRowWithoutLeftWord]
-    
     this.repositionCursorForPush(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
-    //grid[rowIndex] = newBottomRow;
     grid[rowIndex] = combinedLowerRow;
     drawGrid(HEIGHT, WIDTH);
     this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
@@ -310,6 +228,7 @@ splitAtIndex(arr, index) {
       if (remainder.length > 0 && remainder[0] !== "") {
         return [...remainder, ...topRow];
       } else {
+        //!
         return [...bottomRightRow, ...topRow];
       }
     }
@@ -371,6 +290,7 @@ splitAtIndex(arr, index) {
       // Reset horizontal cursor position
       horizontalCursorPosition = 0;
     
+      //!
       // Move vertical cursor down only if it's not the first-time press
       if (1) {
         verticalCursorPosition += 10;
@@ -475,7 +395,7 @@ splitAtIndex(arr, index) {
       
     //   return grid;
     // }
-    
+    //!
     handleOtherRows(rowIndex, columnIndex, grid) {
       let topRow = grid[rowIndex];
       let bottomRow = grid[rowIndex + 1];
@@ -508,7 +428,8 @@ splitAtIndex(arr, index) {
   /////////////start
 
     // Helper function to split a row at a specific index
-splitAtIndex(row, index) {
+    //@
+  splitAtIndex(row, index) {
   return [row.slice(0, index), row.slice(index)];
 }
 
