@@ -90,9 +90,13 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
 
   //@
+
   if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
     return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
   }
+
+
+
 
   if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
 
@@ -116,6 +120,9 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
     return this.pushWordsDoThisSecond(grid, [""], nextRowIndex, false);
   }
+
+
+
 
 
   return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
