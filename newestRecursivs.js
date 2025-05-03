@@ -1,7 +1,3 @@
-//3/1/25 - took from jseditor - remote - is now : 5:20 PM
-//This will be refactored.
-//newest to refactor, copy this into recursiverightbefore...
-//save and merge
 class RecursiveClass {
     constructor() {
       this.lastRowIndexToPushOn = -1;
@@ -380,29 +376,31 @@ splitAtIndex(arr, index) {
     }
     
     //3/7/25
-    // handleLastRow(rowIndex, columnIndex, grid) {
-    //   let topRow = grid[rowIndex];
-    //   let combine = [];
+    handleLastRow(rowIndex, columnIndex, grid) {
+      let topRow = grid[rowIndex];
+      let combine = [];
       
-    //   if (columnIndex !== 0) {
-    //     let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
-    //     let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
-    //     combine = [...topRowLeft, ...topRowRightWithoutFirst];
-    //   } else {
-    //     let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
-    //     let [leftChrRemoved, rightAfterFirst] = this.splitAtIndex(topRowRight, 1);
-    //     combine = [...rightAfterFirst];O
+      if (columnIndex !== 0) {
+        let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
+        let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
+        combine = [...topRowLeft, ...topRowRightWithoutFirst];
+      } else {
+        let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
+        let [leftChrRemoved, rightAfterFirst] = this.splitAtIndex(topRowRight, 1);
+        combine = [...rightAfterFirst];
     
-    //     grid[HEIGHT - 2][WIDTH - 1] = grid[HEIGHT - 1][0];
-    //   }
+        grid[HEIGHT - 2][WIDTH - 1] = grid[HEIGHT - 1][0];
+      }
     
-    //   CursorMovements.cursorLeft();
-    //   grid[rowIndex] = combine;
-    //   grid[HEIGHT - 1][WIDTH - 1] = "-";
+      CursorMovements.cursorLeft();
+      grid[rowIndex] = combine;
+      grid[HEIGHT - 1][WIDTH - 1] = "-";
       
-    //   return grid;
-    // }
-    //!
+      return grid;
+    }
+    
+
+
     handleOtherRows(rowIndex, columnIndex, grid) {
       let topRow = grid[rowIndex];
       let bottomRow = grid[rowIndex + 1];
@@ -536,12 +534,12 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
         verticalCursorPosition + VOFFSET
       );
     }
-    //3/4/25 ChatGPT
-    // - missing funcitonality
-    // Automatic Row Creation	
-    // Cursor Overflow Protection	
-    // Recursive Remainder Cascade	
-    // Edge Case Clamping
+    
+    placeCharacterWithoutInsertDoThisFirst(rowIndex, colIndex, grid, character) {
+      grid[rowIndex][colIndex] = character;
+      return grid;
+    }
+
     initialInsertDoThisFirst(rowIndex, colIndex, grid, leftOverChar, fromIndex) {
       
     
