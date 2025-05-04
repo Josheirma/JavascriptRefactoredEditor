@@ -64,7 +64,7 @@
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, "1", "2", "3" ],
      
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "1", "2" ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, "A", "B", "C" ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "D" ],
          
@@ -119,6 +119,28 @@ const ctx = canvas.getContext('2d');
 
 // Initial state for the insert button
 let insertOn = true;
+
+
+function resizeCanvas() {
+  const scaleX = window.innerWidth / DESIGN_WIDTH;
+  const scaleY = window.innerHeight / DESIGN_HEIGHT;
+  const scale = Math.min(scaleX, scaleY); // maintain aspect ratio
+
+  // Set actual canvas resolution
+  canvas.width = STARTING_HORIZ * scale;
+  canvas.height = STARTING_VERTI * scale;
+
+  // Set display size via CSS
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
+
+  // Reset and scale the context
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
+  ctx.scale(scale, scale);
+
+  draw(); // redraw everything at new scale
+}
+
 
 // Function to initialize the canvas size and appearance
 //3/5/25 - add any missing funtionality, comment, and refactor 

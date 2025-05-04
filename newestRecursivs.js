@@ -7,8 +7,11 @@ class RecursiveClass {
       this.hasBeenInZeroHorizPosition = false;
       this.FlagForFinalRow = true;
     }
-// Deletes a row from the array at the specified rowNumber index
-deleteRow(arr, rowNumber) {
+
+
+  
+  // Deletes a row from the array at the specified rowNumber index
+  deleteRow(arr, rowNumber) {
   // Ensure rowNumber is within valid bounds
   if (rowNumber >= 0 && rowNumber < arr.length) {
     arr.splice(rowNumber, 1); // Remove the row at the specified index
