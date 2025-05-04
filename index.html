@@ -26,8 +26,12 @@
 </script>
 
 <!-- Canvas element for rendering content -->
+<div class = "title">
+Javascript Text Editor
+</div>
+<div class = "canvas" >
 <canvas id="canvas_id" width="" height="" style="border: 1px solid #550233;"></canvas>
-
+</div>
 <!-- Display horizontal and vertical positioning -->
 <div id="xAndY" style="font-size: .55rem; margin-left: 3rem;"></div>
 
@@ -122,9 +126,33 @@ let insertOn = true;
 
 
 function resizeCanvas() {
-  const scaleX = window.innerWidth / DESIGN_WIDTH;
-  const scaleY = window.innerHeight / DESIGN_HEIGHT;
-  const scale = Math.min(scaleX, scaleY); // maintain aspect ratio
+    //let STARTING_HORIZ = 200;  // Starting position on the X-axis
+    //let STARTING_VERTI = 190;  
+
+  const scaleX = window.innerWidth / STARTING_HORIZ;
+  const scaleY = window.innerHeight / STARTING_VERTI ;
+
+  let adjustedX = scaleX
+  let adjustedY = scaleY
+
+  if(window.innerWidth <= 700){
+
+    adjustedX = scaleX*.8
+  adjustedY = scaleY*.8
+  }
+ if(window.innerWidth <= 350){
+  adjustedX = scaleX*.73
+  adjustedY = scaleY*.73
+  }
+  if(window.innerWidth > 699){
+
+    adjustedX = 2.6
+    adjustedY = 4.973
+
+  }
+  
+  
+  let scale = Math.min(adjustedX, adjustedY); // maintain aspect ratio
 
   // Set actual canvas resolution
   canvas.width = STARTING_HORIZ * scale;
@@ -136,9 +164,9 @@ function resizeCanvas() {
 
   // Reset and scale the context
   ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
+  //scale = .5;
+  //3.685
   ctx.scale(scale, scale);
-
-  draw(); // redraw everything at new scale
 }
 
 
@@ -175,6 +203,8 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
   //draws grid
   //3/5/25 - add any missing funtionality, comment, and refactor 
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
+
+   
     // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
     if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
         console.log("bad array");
@@ -188,12 +218,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
     // Make sure to resize the canvas with new dimensions
     makeCanvas(totalVert, STARTING_HORIZ);
-
-    // Set the fill color for the header text (red)
-    ctx.fillStyle = 'red';
-    // Render the header text "Javascript Text Editor" at the top of the canvas
-    ctx.fillText("Javascript Text Editor", 96, 18);
-
+    resizeCanvas();
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
 
@@ -233,6 +258,14 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     //sets up event handlers for both buttons
      inserting.addEventListener('pointerdown', handleInsertButtonClick)
      dashing.addEventListener('pointerdown', handleDashesButtonClick)
+     window.addEventListener('resize', () => {
+     //function setCanvas(){
+        makeCanvas()
+        resizeCanvas();
+        drawGrid(HEIGHT, WIDTH)
+     })
+     
+
      //Left as a regular function in case of need for release event listener
      
      
@@ -416,5 +449,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     Recursive.displayGridAndCursor();
 }
     cursorAndFunctionCalls(event)
+
+
      </script>
     </body>
