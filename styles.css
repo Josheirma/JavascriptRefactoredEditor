@@ -1,44 +1,146 @@
 
 
-#insert {
-    font-size: 16px;
-    width:70px;
-    /*100 - 35*/
-    margin-left:65px;
-    margin-top:1rem;
-}
-
-
 body{
-    margin-left:10px;
+    
     margin-top: 10px;
-
+   min-width: 350px;
+   margin: 0rem;
+   padding: 0rem;
+   width:100%;
+   
+  
 }
 
-#canvas{
+html{
 
+    font-size: 16px;
 }
 
-Button{
+
+
+
+
+
+
+
+
+.canvas{
+
+    text-align: center;
+    
 
 }
+.buttonContainer{
+    display:flex;
+    
+    justify-content:center;
+    align-items: center;
+    
+    margin-top: 1rem;
+    justify-content:center;
+        align-items: center;
+    
 
-#title{
+
+}
+.insertButton{
+
+    width:4rem;
+    font-size: .8rem;
+    height:1.5rem;
+    margin-bottom:.5rem
+    
+
     
 }
 
 
-@media(min-width: 350px) {
+.dashesButton{
 
+    font-size: .8rem;
+    height:1.5rem;
+    width:11rem;
+}
+
+
+
+
+.canvas{
+    /*min-width: 350 - 70px;
+    min-width: 290px;
+    */
+}
+.title{
+
+    font-size: 1.9rem;
+    text-align: center;
+    margin-bottom:1rem
 
 }
 
-@media(min-width: 350px) {
-
+.insertButton{
+    margin-bottom:0rem;
+    margin-right: 2rem;
 
 }
 
+.entireContainer{
+    width:100%;
+    
+    margin-top: 5rem;
+}
+
+
 @media(min-width: 350px) {
+
+    
+    .buttonContainer{
+        display:flex;
+        flex-direction:row;
+        justify-content:center;
+        align-items: center;
+    }
+    .canvas{
+    
+    }
+    
+}
+
+@media(min-width: 1500px){
+
+    .buttonContainer{
+
+        margin-top: 2rem;
+        
+    }
+
+    .insertButton{
+
+        font-size: 1.6rem;
+        width:8rem;
+        height: 2.3rem;
+       
+        
+        
+    }
+
+    .dashesButton{
+
+        font-size: 1.6rem;
+        width:20rem;
+        height: 2.3rem;
+
+    }
+
+}
+
+
+
+
+
+@media(min-width: 500px) {
+
+    
 
 
 }

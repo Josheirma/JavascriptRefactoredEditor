@@ -19,6 +19,12 @@
     // Starting dimensions for the cursor movement
     let STARTING_HORIZ = 200;  // Starting position on the X-axis
     let STARTING_VERTI = 190;   // Starting position on the Y-axis
+    //browser values for min and max width, used for sizing
+    let SMALLES_INNER_WIDTH = 1.4;
+    let SMALLER_NNER_HEIGHT = 3.97;
+    let LARGER_INNER_WIDTH = 2.6;
+    let LARGER_INNER_HEIGHT = 4.937;
+    
 
     // Dash character to replace spaces for display
     let DASH = '-';
@@ -26,6 +32,7 @@
 </script>
 
 <!-- Canvas element for rendering content -->
+<div class = "entireContainer">
 <div class = "title">
 Javascript Text Editor
 </div>
@@ -36,16 +43,17 @@ Javascript Text Editor
 <div id="xAndY" style="font-size: .55rem; margin-left: 3rem;"></div>
 
 <!-- Container for buttons displayed in a column layout -->
-<div style="display: flex; margin-left: 1.15rem; margin-bottom: 0; padding-bottom: 0;">
+<div class = "buttonContainer">
     <!-- Button for inserting content directly on top of the canvas -->
-    <button id="insert" style="padding-top: 0; margin-top: .25rem; width: 2rem; font-size: .4rem; margin-left: 20px;">
+    <button class = "insertButton" id="insert">
         Insert
     </button>
     
     <!-- Button to toggle between showing spaces and dashes -->
-    <button id="areDashes" style="margin-top: .25rem; margin-left: .7rem; font-size: .4rem;">
+    <button class = "dashesButton" id="areDashes">
         Show Without Dashes
     </button>
+</div>
 </div>
 <script>
   
@@ -125,47 +133,54 @@ const ctx = canvas.getContext('2d');
 let insertOn = true;
 
 
+let lastAdujstedX = -1
+let lastAdujstedY = -1
 function resizeCanvas() {
-    //let STARTING_HORIZ = 200;  // Starting position on the X-axis
-    //let STARTING_VERTI = 190;  
+  const minCanvasWidth = 200;
+  const minCanvasHeight = 190; // based on STARTING_VERTI, or adjust as needed
 
   const scaleX = window.innerWidth / STARTING_HORIZ;
-  const scaleY = window.innerHeight / STARTING_VERTI ;
+  const scaleY = window.innerHeight / STARTING_VERTI;
 
-  let adjustedX = scaleX
-  let adjustedY = scaleY
+  let adjustedX = scaleX;
+  let adjustedY = scaleY;
 
-  if(window.innerWidth <= 700){
-
-    adjustedX = scaleX*.8
-  adjustedY = scaleY*.8
+  if (window.innerWidth <= 700) {
+    adjustedX *= 0.8;
+    adjustedY *= 0.8;
+    lastAdujstedX = adjustedX;
+    lastdAdujstedY = adjustedY;
   }
- if(window.innerWidth <= 350){
-  adjustedX = scaleX*.73
-  adjustedY = scaleY*.73
+  if (window.innerWidth <= 350) {
+    // adjustedX *= 0.73;
+    // adjustedY *= 0.73;
+    adjustedX = 1.4;
+    adjustedY = 3.97;
+    
   }
-  if(window.innerWidth > 699){
-
-    adjustedX = 2.6
-    adjustedY = 4.973
-
+  if (window.innerWidth > 699) {
+    adjustedX = 2.6;
+    adjustedY = 4.973;
   }
-  
-  
+
   let scale = Math.min(adjustedX, adjustedY); // maintain aspect ratio
 
-  // Set actual canvas resolution
-  canvas.width = STARTING_HORIZ * scale;
-  canvas.height = STARTING_VERTI * scale;
+  // Enforce min dimensions
+  let newWidth = STARTING_HORIZ * scale;
+  let newHeight = STARTING_VERTI * scale;
 
-  // Set display size via CSS
-  canvas.style.width = `${canvas.width}px`;
-  canvas.style.height = `${canvas.height}px`;
+  if (newWidth < minCanvasWidth) {
+    scale = minCanvasWidth / STARTING_HORIZ;
+    newWidth = minCanvasWidth;
+    newHeight = STARTING_VERTI * scale;
+  }
 
-  // Reset and scale the context
-  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
-  //scale = .5;
-  //3.685
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+  canvas.style.width = `${newWidth}px`;
+  canvas.style.height = `${newHeight}px`;
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(scale, scale);
 }
 
