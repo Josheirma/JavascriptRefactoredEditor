@@ -38,6 +38,7 @@ class RecursiveClass {
   
   // Increment HEIGHT to reflect the new row added to the grid
   HEIGHT++;
+  makeCanvas(630, 200)
   // Return the modified grid with the newly added row
   return grid;
 }
@@ -560,10 +561,11 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
       if (fromIndex) {
         //@
         CursorMovements.cursorRightOneSpace();
-        //combinedRow = [...leftTopRow, ...leftOverChar, ...rightTopRow];
-        combinedRow = [...leftTopRow, ...rightTopRow];
+        combinedRow = [...leftTopRow, ...leftOverChar, ...rightTopRow];
+        //combinedRow = [...leftTopRow, ...rightTopRow];
       } else {
         combinedRow = [...leftOverChar, ...leftTopRow, ...rightTopRow];
+        console.log("combinedrow: ", combinedRow)
         
       }
     
@@ -574,7 +576,11 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     
       // Recursive Call to Next Row with Remainder
       //@@
+      if(remainder.length == 0){
+        alert("zero")
+      }
       if (remainder.length > 0) {
+        //alert("2")
         this.initialInsertDoThisFirst(rowIndex + 1, 0, grid, remainder, false);
         return grid
       }
