@@ -21,7 +21,7 @@
     let STARTING_VERTI = 190;   // Starting position on the Y-axis
     //browser values for min and max width, used for sizing
     let SMALLES_INNER_WIDTH = 1.4;
-    let SMALLER_NNER_HEIGHT = 3.97;
+    let SMALLER_INNER_HEIGHT = 3.97;
     let LARGER_INNER_WIDTH = 2.6;
     let LARGER_INNER_HEIGHT = 4.937;
     
@@ -40,7 +40,7 @@ Javascript Text Editor
 <canvas id="canvas_id" width="" height="" style="border: 1px solid #550233;"></canvas>
 </div>
 <!-- Display horizontal and vertical positioning -->
-<div id="xAndY" style="font-size: .55rem; margin-left: 3rem;"></div>
+<div id="xAndY" style="font-size: 2.3rem; margin-left: 25.2rem;"></div>
 
 <!-- Container for buttons displayed in a column layout -->
 <div class = "buttonContainer">
@@ -66,9 +66,9 @@ Javascript Text Editor
   
   let gridArray = [
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "1", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "2", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "2", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "C" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "A" ],
+    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "B" ],
      
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
@@ -135,10 +135,42 @@ let insertOn = true;
 
 let lastAdujstedX = -1
 let lastAdujstedY = -1
-function resizeCanvas() {
-  const minCanvasWidth = 200;
-  const minCanvasHeight = 190; // based on STARTING_VERTI, or adjust as needed
 
+function makeCanvas(verticalSize = 190, horizontalSize = 200) {
+
+    //alert("makeCanvas")
+  // Set canvas display size
+  canvas.style.width = `${horizontalSize}px`;
+  canvas.style.height = `${verticalSize}px`;
+
+  // For crisper imaging on high DPI screens
+  const scale = window.devicePixelRatio;
+
+  // Set the canvas' internal resolution to match the display size, scaled for better display
+  canvas.width = horizontalSize * scale;
+  canvas.height = verticalSize * scale;
+
+  // Apply scaling to match the display resolution
+  ctx.scale(scale, scale);
+
+  // Set canvas background to white
+  ctx.fillStyle = '#ffffff';
+
+  // Clear canvas (white background)
+  ctx.fillRect(0, 0, 200, 200);
+
+  // Set font and text alignment
+  ctx.font = '10px Monospace';
+  ctx.textAlign = 'center';
+}
+
+
+// let SMALLES_INNER_WIDTH = 1.4;
+// let SMALLER_NNER_HEIGHT = 3.97;
+// let LARGER_INNER_WIDTH = 2.6;
+// let LARGER_INNER_HEIGHT = 4.937;
+
+ function resizeCanvas(minCanvasHeight = 190, minCanvasWidth = 200) {
   const scaleX = window.innerWidth / STARTING_HORIZ;
   const scaleY = window.innerHeight / STARTING_VERTI;
 
@@ -152,15 +184,15 @@ function resizeCanvas() {
     lastdAdujstedY = adjustedY;
   }
   if (window.innerWidth <= 350) {
-    // adjustedX *= 0.73;
-    // adjustedY *= 0.73;
-    adjustedX = 1.4;
-    adjustedY = 3.97;
+   
+    adjustedX = SMALLES_INNER_WIDTH;
+    adjustedY = SMALLER_INNER_HEIGHT;
     
   }
   if (window.innerWidth > 699) {
-    adjustedX = 2.6;
-    adjustedY = 4.973;
+    adjustedX = LARGER_INNER_WIDTH;
+    adjustedY = LARGER_INNER_HEIGHT;
+
   }
 
   let scale = Math.min(adjustedX, adjustedY); // maintain aspect ratio
@@ -170,51 +202,26 @@ function resizeCanvas() {
   let newHeight = STARTING_VERTI * scale;
 
   if (newWidth < minCanvasWidth) {
-    scale = minCanvasWidth / STARTING_HORIZ;
-    newWidth = minCanvasWidth;
+    scale = horizontalSize / STARTING_HORIZ;
+    newWidth = horizontalSize;
     newHeight = STARTING_VERTI * scale;
+    alert("atHere")
   }
 
   canvas.width = newWidth;
   canvas.height = newHeight;
+  //canvas.height = toverticalSize * scale;
   canvas.style.width = `${newWidth}px`;
   canvas.style.height = `${newHeight}px`;
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(scale, scale);
+  
 }
 
 
-// Function to initialize the canvas size and appearance
-//3/5/25 - add any missing funtionality, comment, and refactor 
-function makeCanvas(verticalSize = 190, horizontalSize = 200) {
-    // Set canvas display size
-    canvas.style.width = `${horizontalSize}px`;
-    canvas.style.height = `${verticalSize}px`;
-
-    // For crisper imaging on high DPI screens
-    const scale = window.devicePixelRatio;
-
-    // Set the canvas' internal resolution to match the display size, scaled for better display
-    canvas.width = horizontalSize * scale;
-    canvas.height = verticalSize * scale;
-
-    // Apply scaling to match the display resolution
-    ctx.scale(scale, scale);
-
-    // Set canvas background to white
-    ctx.fillStyle = '#ffffff';
-
-    // Clear canvas (white background)
-    ctx.fillRect(0, 0, 200, 200);
-
-    // Set font and text alignment
-    ctx.font = '10px Monospace';
-    ctx.textAlign = 'center';
-}
- 
-  
-  
+    
+makeCanvas(STARTING_VERTI, STARTING_HORIZ);
   //draws grid
   //3/5/25 - add any missing funtionality, comment, and refactor 
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
@@ -232,8 +239,12 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     let totalVert = extraHeightRows * 10 + STARTING_VERTI;
 
     // Make sure to resize the canvas with new dimensions
-    makeCanvas(totalVert, STARTING_HORIZ);
-    resizeCanvas();
+    //
+    
+
+    //look at reduceCanvas - scale befor filled
+    makeCanvas(totalVert*2, STARTING_HORIZ*2);
+
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
 
@@ -275,9 +286,11 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
      dashing.addEventListener('pointerdown', handleDashesButtonClick)
      window.addEventListener('resize', () => {
      //function setCanvas(){
-        makeCanvas()
+        //makeCanvas()
         resizeCanvas();
-        drawGrid(HEIGHT, WIDTH)
+        drawGrid(HEIGHT,WIDTH)
+        
+       
      })
      
 
