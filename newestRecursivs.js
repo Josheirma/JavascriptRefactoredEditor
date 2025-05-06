@@ -299,7 +299,7 @@ splitAtIndex(arr, index) {
       // Reset horizontal cursor position - adjust cursor
       horizontalCursorPosition = 0;
     
-      /
+      
       // Move vertical cursor down only if it's not the first-time press
       //if (1) {
         verticalCursorPosition += 10;
