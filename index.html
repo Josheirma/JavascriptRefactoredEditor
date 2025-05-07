@@ -135,54 +135,7 @@ let insertOn = true;
 
 let lastAdujstedX = -1
 let lastAdujstedY = -1
-function resizeCanvas() {
-  const minCanvasWidth = 200;
-  const minCanvasHeight = 190; // based on STARTING_VERTI, or adjust as needed
 
-  const scaleX = window.innerWidth / STARTING_HORIZ;
-  const scaleY = window.innerHeight / STARTING_VERTI;
-
-  let adjustedX = scaleX;
-  let adjustedY = scaleY;
-
-  if (window.innerWidth <= 700) {
-    adjustedX *= 0.8;
-    adjustedY *= 0.8;
-    lastAdujstedX = adjustedX;
-    lastdAdujstedY = adjustedY;
-  }
-  if (window.innerWidth <= 350) {
-    // adjustedX *= 0.73;
-    // adjustedY *= 0.73;
-    adjustedX = 1.4;
-    adjustedY = 3.97;
-    
-  }
-  if (window.innerWidth > 699) {
-    adjustedX = 2.6;
-    adjustedY = 4.973;
-  }
-
-  let scale = Math.min(adjustedX, adjustedY); // maintain aspect ratio
-
-  // Enforce min dimensions
-  let newWidth = STARTING_HORIZ * scale;
-  let newHeight = STARTING_VERTI * scale;
-
-  if (newWidth < minCanvasWidth) {
-    scale = minCanvasWidth / STARTING_HORIZ;
-    newWidth = minCanvasWidth;
-    newHeight = STARTING_VERTI * scale;
-  }
-
-  canvas.width = newWidth;
-  canvas.height = newHeight;
-  canvas.style.width = `${newWidth}px`;
-  canvas.style.height = `${newHeight}px`;
-
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.scale(scale, scale);
-}
 
 
 // Function to initialize the canvas size and appearance
@@ -233,7 +186,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
     // Make sure to resize the canvas with new dimensions
     makeCanvas(totalVert, STARTING_HORIZ);
-    resizeCanvas();
+   
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
 
@@ -273,12 +226,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     //sets up event handlers for both buttons
      inserting.addEventListener('pointerdown', handleInsertButtonClick)
      dashing.addEventListener('pointerdown', handleDashesButtonClick)
-     window.addEventListener('resize', () => {
-     //function setCanvas(){
-        makeCanvas()
-        resizeCanvas();
-        drawGrid(HEIGHT, WIDTH)
-     })
+     
      
 
      //Left as a regular function in case of need for release event listener
