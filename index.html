@@ -29,6 +29,10 @@
     // Dash character to replace spaces for display
     let DASH = '-';
     let areDashes = true; // Flag to toggle dash display instead of spaces
+
+    
+
+
 </script>
 
 <!-- Canvas element for rendering content -->
@@ -37,7 +41,7 @@
 Javascript Text Editor
 </div>
 <div class = "canvas" >
-<canvas id="canvas_id" width="" height="" style="border: 1px solid #550233;"></canvas>
+<canvas id="canvas" width="500" height="380" style="border: 1px solid #550233;"></canvas>
 </div>
 <!-- Display horizontal and vertical positioning -->
 <div id="xAndY" style="font-size: .55rem; margin-left: 3rem;"></div>
@@ -55,8 +59,19 @@ Javascript Text Editor
     </button>
 </div>
 </div>
+
 <script>
-  
+
+//const canvasFromID = document.getElementById('canvas_id');
+
+    // Update drawing resolution
+    //canvasFromID.width = 400;
+    //canvasFromID.height = 380;
+
+    // Update visual size with CSS
+    //canvasFromID.style.width = '400px';
+    //canvasFromID.style.height = '380px';
+
   //keep track of cursor location, horizontal step is 5, and vertical step is 10
   let horizontalCursorPosition = 0
   let verticalCursorPosition = 0
@@ -121,7 +136,8 @@ const VOFFSET = 32;
 const HOFFSET = 35;
 let copy2DimArray = [];
 // Get the canvas element for handling
-const canvas = document.getElementById('canvas_id');
+const canvas = document.getElementById('canvas');
+
 
 // Get the insert button
 const insertOnButton = document.getElementById('insert');
@@ -138,38 +154,78 @@ let lastAdujstedY = -1
 
 
 
-//// Function to initialize the canvas size and appearance
-//3/5/25 - add any missing funtionality, comment, and refactor 
-function makeCanvas(verticalSize = 190, horizontalSize = 200) {
-    // Set canvas display size
-    canvas.style.width = `${horizontalSize}px`;
-    canvas.style.height = `${verticalSize}px`;
+//////////OKAY: Responsive canvas setup
+//####RESIZE CANVAS HAS ITS OWN DRAW, at end set HEIGHT AND WIDTH
+//DRAWGRID USES ITS OWN DRAW USING THE SAME CTX
 
-    // For crisper imaging on high DPI screens
-    const scale = window.devicePixelRatio;
+function resizeCanvas() {
+      // Account for device pixel ratio for sharp rendering
+      const dpr = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
-    // Set the canvas' internal resolution to match the display size, scaled for better display
-    canvas.width = horizontalSize * scale;
-    canvas.height = verticalSize * scale;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
 
-    // Apply scaling to match the display resolution
-    ctx.scale(scale, scale);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing operations
 
-    // Set canvas background to white
-    ctx.fillStyle = '#ffffff';
+      //draw(width, height); // was calling re-draw after resizing
+      //...function continuess here...
+      return
+    }
 
-    // Clear canvas (white background)
-    ctx.fillRect(0, 0, 200, 200);
+    function draw(width, height) {
+      ctx.clearRect(0, 0, width, height);
+      const size = Math.min(width, height) * 0.5; // Square is 30% of smaller screen dimension
+      const x = (width - size) / 2;
+      const y = (height - size) / 2;
 
-    // Set font and text alignment
-    ctx.font = '10px Monospace';
-    ctx.textAlign = 'center';
-}
+      ctx.fillStyle = 'cornflowerblue';
+      ctx.fillRect(x, y, size, size);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+
+
+/////////
+
+// //// Function to initialize the canvas size and appearance
+// //3/5/25 - add any missing funtionality, comment, and refactor 
+// function makeCanvas(verticalSize = 190, horizontalSize = 200) {
+//     // Set canvas display size
+//     canvas.style.width = `${horizontalSize}px`;
+//     canvas.style.height = `${verticalSize}px`;
+
+//     // For crisper imaging on high DPI screens
+//     const scale = window.devicePixelRatio;
+
+//     // Set the canvas' internal resolution to match the display size, scaled for better display
+//     canvas.width = horizontalSize * scale;
+//     canvas.height = verticalSize * scale;
+
+//     // Apply scaling to match the display resolution
+//     ctx.scale(scale, scale);
+
+//     // Set canvas background to white
+//     ctx.fillStyle = '#ffffff';
+
+//     // Clear canvas (white background)
+//     ctx.fillRect(0, 0, 200, 200);
+
+//     // Set font and text alignment
+//     ctx.font = '10px Monospace';
+//     ctx.textAlign = 'center';
+// }
  
   
   
   //draws grid
-  //3/5/25 - add any missing funtionality, comment, and refactor 
+  
+  //STILL GETS CALLED BY ALL THE COD
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
 
    
@@ -184,8 +240,15 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // For each additional row, increase canvas height by 10 pixels
     let totalVert = extraHeightRows * 10 + STARTING_VERTI;
 
-    // Make sure to resize the canvas with new dimensions
-    makeCanvas(totalVert, STARTING_HORIZ);
+    //IF THIS IS GREATER, THAN CREATE A LINE WITH SAME CTX
+    
+
+
+
+    // Make sure to resize the canvas with new dimensions - THIS WAS OLD CODE, NOW JUST CONTINUE
+    //makeCanvas(totalVert, STARTING_HORIZ);
+    
+   
    
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
