@@ -114,7 +114,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     
     //@
     //
-    // this.repositionCursorForPush(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
+    this.repositionCursorForPush(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
     
     grid[rowIndex] = combinedLowerRow;
     drawGrid(HEIGHT, WIDTH);
@@ -168,7 +168,7 @@ repositionCursorForPush(grid,rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
 
 // cursor is located in the final word, on top row
 handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
-  
+  return
   // Ensure we're within bounds of the top row and the cursor is properly aligned
   for (let i = WIDTH - wordAtEndOfRowOne.length; i < WIDTH; i++) {
     //character is on left space, bottom row
@@ -193,6 +193,7 @@ handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
 
 handleCursorInBottomRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
   // check in first leftmost characters
+  return
   for (let i = 0; i < firstWordBottomRow.length; i++) {
     // top row has a character on right hand side
     if (grid[rowIndex - 1][WIDTH - 1] !== "-" && verticalCursorPosition / 10 === rowIndex && horizontalCursorPosition / 5 === i + 1) {
@@ -287,21 +288,32 @@ splitAtIndex(arr, index) {
     }
     
     pressedEnter(grid, rowIndex, colIndex, remainder, IsFirstTime, counter) {
+
+      let IsConnectedFlag = true;
       // Base case: Prevent overflow if the cursor moves beyond grid height
       if (rowIndex >  HEIGHT - 1) return grid;
     
       // Create a new row at the specified row index
       this.createRow(grid, rowIndex);
     
+      // Reset horizontal cursor position - adjust cursor
+      horizontalCursorPosition = 0;
+
+      //if is, set flag to put cursor on second column
+      IsConnectedFlag = this.checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag);
+
       // Only call divideNextRowsAsNeeded if there is a valid remainder or if it's the first-time press
       if (remainder.length > 0 || IsFirstTime) {
         //@
         this.divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder.length > 0 ? remainder : [""]);
       }
     
-      // Reset horizontal cursor position - adjust cursor
-      horizontalCursorPosition = 0;
-    
+      
+        horizontalCursorPosition = 0;
+      if(IsConnectedFlag && grid[rowIndex][0] != "-"){
+        horizontalCursorPosition = 5;
+      }
+      
       
       // Move vertical cursor down only if it's not the first-time press
       //if (1) {
@@ -321,6 +333,21 @@ splitAtIndex(arr, index) {
     
       // Recursive call if content still remains
       return this.pressedEnter(grid, rowIndex + 1, colIndex, remainder, false, counter + 1);
+    }
+
+    //checks to see if in a word against right hand margin
+    checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag){
+      
+      for(let i = colIndex; i < WIDTH-1 ; i++){
+        if (grid[rowIndex][i] === "-"){
+          IsConnectedFlag = false;
+          break;
+
+        }
+        
+      }
+
+      return IsConnectedFlag
     }
 
     divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder) {
