@@ -12,13 +12,16 @@
   
   
   <script>
+    //changed scale 2
+    //changed constant
+
     // Initialize the classes for cursor movement and recursion (assumed to be defined elsewhere)
     const CursorMovements = new CursorMovementsClass();
     const Recursive = new RecursiveClass();
 
     // Starting dimensions for the cursor movement
-    let STARTING_HORIZ = 200;  // Starting position on the X-axis
-    let STARTING_VERTI = 190;   // Starting position on the Y-axis
+    let STARTING_HORIZ = 400;  // Starting position on the X-axis
+    let STARTING_VERTI = 380;   // Starting position on the Y-axis
     //browser values for min and max width, used for sizing
     let SMALLES_INNER_WIDTH = 1.4;
     let SMALLER_NNER_HEIGHT = 3.97;
@@ -37,11 +40,12 @@
 Javascript Text Editor
 </div>
 <div class = "canvas" >
-<canvas id="canvas_id" width="" height="" style="border: 1px solid #550233;"></canvas>
+<canvas id="canvas_id" width="400" height="400" style="border: 1px solid #550233;"></canvas>
 </div>
 <!-- Display horizontal and vertical positioning -->
-<div id="xAndY" style="font-size: .55rem; margin-left: 3rem;"></div>
-
+<div class = "containsXAndY">
+<div id="xAndY" >Horizontal: &nbsp0&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspVertical: 0  </div>
+</div>
 <!-- Container for buttons displayed in a column layout -->
 <div class = "buttonContainer">
     <!-- Button for inserting content directly on top of the canvas -->
@@ -67,7 +71,7 @@ Javascript Text Editor
   let gridArray = [
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "1", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "2", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    ["1", "2", "3", DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
      
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
@@ -182,21 +186,22 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // Calculate the number of extra rows beyond the original height
     let extraHeightRows = HEIGHT - ORIGINALHEIGHT;
     // For each additional row, increase canvas height by 10 pixels
-    let totalVert = extraHeightRows * 10 + STARTING_VERTI;
+    let totalVert = extraHeightRows * 20 + STARTING_VERTI + 20;
 
     // Make sure to resize the canvas with new dimensions
+    //to change dimensions add to these values and change ivalue, jvalue, an xpos and ypos offset
     makeCanvas(totalVert, STARTING_HORIZ);
    
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
-
+    ctx.scale(2, 2);
     // Loop through the grid and render each cell's text
     for (let i = 0; i < iValue; i++) {
-        for (let j = 0; j < jValue; j++) {
+        for (let j = 0; j < jValue+40; j++) {
             // Check if the current grid cell exists and is valid
             let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : ""; // Default to empty string if invalid
             // Calculate the x and y positions based on the grid layout
-            //!
+            // 6 locations before text starts
             let xPos = j * 5 + 30;
             let yPos = i * 10 + 33;
             // Render the text in the canvas at calculated positions
@@ -406,7 +411,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
 
     // Ensure that words within the grid don't overflow and adjust if needed
-    gridArray = Recursive.pushWordsDoThisSecond(gridArray, ["Y"], 1, true);
+    gridArray = Recursive.pushWordsDoThisSecond(gridArray, [""], 1, true);
 
     // Redraw the grid and update the cursor display after any changes
     Recursive.displayGridAndCursor();
