@@ -232,11 +232,11 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
      
      
 
-     //Left as a regular function in case of need for release event listener
+    
      
      
   // Function to handle Insert button click event
-  //3/5/25 - add any missing funtionality, comment, and refactor 
+  
   function handleInsertButtonClick() {
   // Toggle the insertOn flag
   insertOn = !insertOn;
@@ -256,7 +256,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     
 
     // This function handles the button click to toggle between displaying dashes and spaces on the grid
-     //3/5/25 - add any missing funtionality, comment, and refactor 
+     
     function handleDashesButtonClick() {
     // Toggle the dash state: if showing dashes, switch to spaces, and vice versa.
     if (areDashes) {
@@ -344,7 +344,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     ];
     
     // This function updates the display of the cursor's current horizontal and vertical positions
-    //3/5/25 - add any missing funtionality, comment, and refactor 
+    
     function displayCursorLocations() {
     // Get the DOM element where the cursor positions will be displayed
     let cursorDisplayElement = document.getElementById("xAndY");
@@ -362,7 +362,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
 
     // This function handles the cursor movements and function calls based on key presses
-    //3/5/25 - add any missing funtionality, comment, and refactor 
+    
     function cursorAndFunctionCalls(event) {
     // Display the current cursor positions (this line is currently commented out)
     // displayCursorLocations();
