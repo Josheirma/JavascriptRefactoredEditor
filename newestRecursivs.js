@@ -21,7 +21,8 @@ class RecursiveClass {
     console.error("Invalid row number: out of bounds"); 
   }
 
-  return arr; // Return the modified array
+  // Return the modified array
+  return arr; 
 }
 
 
@@ -101,10 +102,6 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
     drawGrid(HEIGHT, WIDTH);
     let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
-    
-    //get right side after last space or null
-    //newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide || [];
-    //let lengthOfNewRemainder = newRemainder.length
     
 
     //there needs to be a word on left, so that the wrap will work.
@@ -262,10 +259,9 @@ splitAtIndex(arr, index) {
       }
       
       
-      // Move vertical cursor down only if it's not the first-time press
-      //if (1) {
+      
         verticalCursorPosition += 10;
-      //}
+     
     
       // Ensure cursor stays within grid boundaries
       verticalCursorPosition = Math.min(verticalCursorPosition, (HEIGHT - 1) * 10);
@@ -390,7 +386,7 @@ splitAtIndex(arr, index) {
       let [leftDiscarded, topRightWithoutFirst] = this.splitAtIndex(topRightRow, 1);
       let combinedRow = [...topLeftRow, ...topRightWithoutFirst];
     
-      //replace chracter on far right, with left most lower chracter
+      //replace character on far right, with left most lower chracter
       //can't be top row because there is no left most character above it!
       if (rowIndex !== 0 && columnIndex === 0 && rowIndex === verticalCursorPosition / 10) {
         grid[rowIndex - 1][WIDTH - 1] = grid[rowIndex][0];
@@ -493,7 +489,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   return grid;
 }
 
-////////////end
+
 
 
 

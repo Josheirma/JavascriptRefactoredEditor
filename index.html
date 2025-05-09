@@ -12,9 +12,7 @@
   
   
   <script>
-    //changed scale 2
-    //changed constant
-
+    
     // Initialize the classes for cursor movement and recursion (assumed to be defined elsewhere)
     const CursorMovements = new CursorMovementsClass();
     const Recursive = new RecursiveClass();
@@ -88,8 +86,7 @@ Javascript Text Editor
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "Y" ],
     ["B", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "Z" ],
     ["A", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "B", "C" ],
-         //["!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!","!", "!", "!", "!", "!" , "!" ],
-    ];
+          ];
     /*
     let gridArray = [
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
@@ -143,8 +140,8 @@ let lastAdujstedY = -1
 
 
 
-//// Function to initialize the canvas size and appearance
-//3/5/25 - add any missing funtionality, comment, and refactor 
+// Function to initialize the canvas size and appearance
+
 function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // Set canvas display size
     canvas.style.width = `${horizontalSize}px`;
@@ -174,7 +171,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
   
   
   //draws grid
-  //3/5/25 - add any missing funtionality, comment, and refactor 
+  
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
 
    
@@ -211,8 +208,8 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
 }
 
-  //draws cursor on grid//
-  //3/5/25 - add any missing funtionality, comment, and refactor 
+  //draws cursor on grid
+ 
   function drawCursor(x,y){
     
     ctx.font = '10px Monospace'
