@@ -145,7 +145,11 @@ Javascript Text Editor
 
   // Cursor canvas offsets
   const VOFFSET = 32;
-  const HOFFSET = 35;
+  const HOFFSET = 32;
+  const gridOffsetX = 15
+  const gridOffsetY = 20
+  const fineTunedCursorXonGrid = -2
+  const fineTunedCursorYonGrid = 8
 
   // Copy grid (ensure it's used somewhere in your logic)
   let copy2DimArray = [];
@@ -184,7 +188,16 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     canvas.style.height = `${verticalSize}px`;
 
     // For crisper imaging on high DPI screens
-    const scale = window.devicePixelRatio;
+    //const scale = window.devicePixelRatio;
+
+
+
+
+
+
+
+
+    scale = 1
 
     // Set the canvas' internal resolution to match the display size, scaled for better display
     canvas.width = horizontalSize * scale;
@@ -224,45 +237,52 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         return; // Exit the function early if the grid is invalid
     }
 
-    // Calculate the number of extra rows beyond the original height
-    let extraHeightRows = HEIGHT - ORIGINALHEIGHT;
-    // For each additional row, increase canvas height by 10 pixels
-    let totalVert = extraHeightRows * 20 + STARTING_VERTI + 20;
+    // All values are also doubled due to a scaling factor of 2 applied earlier
+    // Width is normally multiplied by 5
+    // Height is normally multiplied by 10
+    // Multiplier is the constant times 4 (2 margins × 2 sides = 4)
 
-    // Make sure to resize the canvas with new dimensions
-    //to change dimensions add to these values and change ivalue, jvalue, an xpos and ypos offset
-    makeCanvas(totalVert, STARTING_HORIZ);
-   
+    // There are two of these per canvas (they represent the margins)
+    // All values are also doubled due to a previously applied scaling factor of 2
+    //above:
+    //const VOFFSET = 32;
+    //const HOFFSET = 32;
+    // const gridOffsetX = 15
+    // const gridOffsetY = 20
+    // const fineTunedCursorXonGrid = -2
+    // const fineTunedCursorYonGrid = 8
+
+    makeCanvas(VOFFSET*4 + HEIGHT*20, HOFFSET*4 + WIDTH*10)
+
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
     ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any previous transform
     ctx.scale(2, 2);
     // Loop through the grid and render each cell's text
     for (let i = 0; i < iValue; i++) {
-        for (let j = 0; j < jValue+40; j++) {
+        for (let j = 0; j < jValue; j++) {
             // Check if the current grid cell exists and is valid
             let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : ""; // Default to empty string if invalid
             // Calculate the x and y positions based on the grid layout
             // 6 locations before text starts
-            let xPos = j * 5 + 30;
-            let yPos = i * 10 + 33;
+            let xPos = j * 5 + 2*gridOffsetX;  
+            
+            //on inner margin
+            let yPos = i * 10 + 2*gridOffsetY
             // Render the text in the canvas at calculated positions
             ctx.fillText(cellText, xPos, yPos);
         }
     }
 }
 
-  //draws cursor on grid
  
-
-  ////////////////////////////////start here
-
   
   function drawCursor(x,y){
     
     ctx.font = '10px Monospace'
     ctx.fillStyle = 'red'
-    ctx.fillText('_', x - 5, y)
+    //fine tuned
+    ctx.fillText('_', x+fineTunedCursorXonGrid, y+fineTunedCursorYonGrid)
     }
 
 
