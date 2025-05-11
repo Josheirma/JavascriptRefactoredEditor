@@ -16,3 +16,11 @@ enforceGridConsistency(grid) {
     }
     return grid;
   }
+
+
+  if (Recursive && typeof Recursive.cursorRight === 'function') {
+    Recursive.cursorRight();
+}
+
+
+let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
