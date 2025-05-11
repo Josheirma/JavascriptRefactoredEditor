@@ -438,10 +438,10 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         // If a character key is pressed, determine whether to insert or overwrite the character
         if (insertOn === true && gKey) {
             // Regular insert mode (moves text to insert the character)
-            //gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey, true);
+            gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey, true);
         } else {
             // Destructive insert mode (overwrites the character at the cursor)
-            //gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey);
+            gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey);
         }
     }
 

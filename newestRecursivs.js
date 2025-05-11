@@ -77,18 +77,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   
   /////
   
-  //no remainder
-  if (newRemainder == null){
-  
-  
   bottomRow = grid[rowIndex]
-}else{
-  
-  bottomRow = [...newRemainder, ...grid[rowIndex]]
-    
-  } 
-
-
 
 
   let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrNull(grid, topRow);
