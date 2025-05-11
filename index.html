@@ -13,16 +13,40 @@
   
   <script>
     
+
+    let CursorMovements = null;
+    let Recursive = null;
+    let inserting;
+    let dashing;
     // Initialize the classes for cursor movement and recursion (assumed to be defined elsewhere)
-    const CursorMovements = new CursorMovementsClass();
-    const Recursive = new RecursiveClass();
+  document.addEventListener("DOMContentLoaded", () => {
+  CursorMovements = new CursorMovementsClass();
+  Recursive = new RecursiveClass();
+  inserting = document.getElementById('insert')
+  dashing = document.getElementById('areDashes')
+  // Add event listener to Button 1
+  // Check if buttons exist before adding event listeners
+  if (inserting) {
+    inserting.addEventListener('pointerdown', handleInsertButtonClick);
+  } else {
+    console.error("Insert button not found");
+  }
+
+  if (dashing) {
+    dashing.addEventListener('pointerdown', handleDashesButtonClick);
+  } else {
+    console.error("Dashes button not found");
+  }
+
+  // your setup logic here
+  });
 
     // Starting dimensions for the cursor movement
     let STARTING_HORIZ = 400;  // Starting position on the X-axis
     let STARTING_VERTI = 380;   // Starting position on the Y-axis
     //browser values for min and max width, used for sizing
     let SMALLES_INNER_WIDTH = 1.4;
-    let SMALLER_NNER_HEIGHT = 3.97;
+    let SMALLER_INNER_HEIGHT = 3.97;
     let LARGER_INNER_WIDTH = 2.6;
     let LARGER_INNER_HEIGHT = 4.937;
     
@@ -75,6 +99,7 @@ Javascript Text Editor
      
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, "z", "y", "c", "b", "a" ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, "1", "2", "3" ],
      
@@ -110,33 +135,44 @@ Javascript Text Editor
          //["!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!","!", "!", "!", "!", "!" , "!" ],
     ];
     */
-  // Canvas configuration
-// Dimensions for dashes/spaces grid
-let WIDTH = 28;
-let HEIGHT = 15;
-
-// Column-related constants
-const ORIGINALHEIGHT = 15;
-
-// Offsets to space the canvas for cursor positioning
-const VOFFSET = 32;
-const HOFFSET = 35;
-let copy2DimArray = [];
-// Get the canvas element for handling
-const canvas = document.getElementById('canvas_id');
-
-// Get the insert button
-const insertOnButton = document.getElementById('insert');
-
-// Canvas context for drawing
-const ctx = canvas.getContext('2d');
-
-// Initial state for the insert button
-let insertOn = true;
+  
 
 
-let lastAdujstedX = -1
-let lastAdujstedY = -1
+  // Grid dimensions
+  const WIDTH = 28;
+  let HEIGHT = 15;
+  const ORIGINALHEIGHT = 15;
+
+  // Cursor canvas offsets
+  const VOFFSET = 32;
+  const HOFFSET = 35;
+
+  // Copy grid (ensure it's used somewhere in your logic)
+  let copy2DimArray = [];
+
+  // Canvas and context
+  const canvas = document.getElementById('canvas_id');
+  if (!canvas) {
+    console.error("Canvas element with ID 'canvas_id' not found.");
+    
+  }
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    console.error("Failed to get 2D context from canvas.");
+    
+  }
+
+  // Initial insert mode state
+  let insertOn = true;
+  // Cursor tracking
+  let lastAdjustedX = -1;  // fixed typo from 'lastAdujstedX'
+  let lastAdjustedY = -1;  // fixed typo from 'lastAdujstedY'
+
+
+
+
+
 
 
 
@@ -155,6 +191,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     canvas.height = verticalSize * scale;
 
     // Apply scaling to match the display resolution
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any previous transform
     ctx.scale(scale, scale);
 
     // Set canvas background to white
@@ -168,9 +205,15 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     ctx.textAlign = 'center';
 }
  
+
+//////////
+
+
+
   
   
-  //draws grid
+  
+
   
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
 
@@ -192,6 +235,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
    
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any previous transform
     ctx.scale(2, 2);
     // Loop through the grid and render each cell's text
     for (let i = 0; i < iValue; i++) {
@@ -210,6 +254,10 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
   //draws cursor on grid
  
+
+  ////////////////////////////////start here
+
+  
   function drawCursor(x,y){
     
     ctx.font = '10px Monospace'
@@ -223,18 +271,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     //array that holds key code, (number)
     var keyState = {}
     let down = false
-    //gets the handles of these two buttons
-    let inserting = document.getElementById('insert')
-    let dashing = document.getElementById('areDashes')
-    //sets up event handlers for both buttons
-     inserting.addEventListener('pointerdown', handleInsertButtonClick)
-     dashing.addEventListener('pointerdown', handleDashesButtonClick)
-     
-     
-
     
-     
-     
   // Function to handle Insert button click event
   
   function handleInsertButtonClick() {
@@ -401,20 +438,20 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         // If a character key is pressed, determine whether to insert or overwrite the character
         if (insertOn === true && gKey) {
             // Regular insert mode (moves text to insert the character)
-            gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey, true);
+            //gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey, true);
         } else {
             // Destructive insert mode (overwrites the character at the cursor)
-            gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey);
+            //gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey);
         }
     }
 
     // Ensure that words within the grid don't overflow and adjust if needed
-    gridArray = Recursive.pushWordsDoThisSecond(gridArray, [""], 1, true);
+    gridArray = Recursive.pushWordsDoThisSecond(gridArray, null, 1, true);
 
     // Redraw the grid and update the cursor display after any changes
     Recursive.displayGridAndCursor();
 }
-    cursorAndFunctionCalls(event)
+    //cursorAndFunctionCalls(event)
 
 
      </script>

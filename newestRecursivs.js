@@ -28,7 +28,7 @@ class RecursiveClass {
 
   // Adds a new row with placeholder values to the grid at the specified rowIndex
   
-  createRow(grid, rowIndex) {
+  createRow(grid) {
   // Define a new row with placeholders ("-") for each column
   const newRow = [
     "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", 
@@ -71,7 +71,25 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
   let topRow = grid[rowIndex - 1] || [];
   //if there is a remainder add it to the bottom row.
-  let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
+  //let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
+  
+  let bottomRow = []
+  
+  /////
+  
+  //no remainder
+  if (newRemainder == null){
+  
+  
+  bottomRow = grid[rowIndex]
+}else{
+  
+  bottomRow = [...newRemainder, ...grid[rowIndex]]
+    
+  } 
+
+
+
 
   let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrNull(grid, topRow);
   let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
@@ -323,7 +341,7 @@ splitAtIndex(arr, index) {
     
       // Recursive call if there is still a remainder
       if (newRemainder.length > 0) {
-        this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
+        return this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
       }
     
       // Draw the horizontal line
@@ -465,7 +483,10 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   const [removedBottomLeftChar, bottomRowWithoutLeftCharacter ] = this.splitAtIndex(bottomRow, 1);
   
   // Remove the rightmost character from the top row
-  const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
+  
+  //@
+  //const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
+  const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length - 1);
 
   // Add the removed leftmost character from the bottom row to the end of the top row
   let newTopRow = [...topRowWithoutRightCharacter, leftCharacterOfBottomRow];
