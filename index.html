@@ -18,6 +18,7 @@
     let Recursive = null;
     let inserting;
     let dashing;
+   
     // Initialize the classes for cursor movement and recursion (assumed to be defined elsewhere)
   document.addEventListener("DOMContentLoaded", () => {
   CursorMovements = new CursorMovementsClass();
@@ -142,14 +143,16 @@ Javascript Text Editor
   const WIDTH = 28;
   let HEIGHT = 15;
   const ORIGINALHEIGHT = 15;
-
+  let lastHeight = HEIGHT
+  
   // Cursor canvas offsets
   const VOFFSET = 32;
   const HOFFSET = 32;
-  const gridOffsetX = 15
-  const gridOffsetY = 20
-  const fineTunedCursorXonGrid = -2
+  const gridOffsetX = 34
+  const gridOffsetY = 40
+  const fineTunedCursorXonGrid = 2
   const fineTunedCursorYonGrid = 8
+
 
   // Copy grid (ensure it's used somewhere in your logic)
   let copy2DimArray = [];
@@ -189,29 +192,24 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
     // For crisper imaging on high DPI screens
     //const scale = window.devicePixelRatio;
-
-
-
-
-
-
-
-
-    scale = 1
+    //const scale = 1
+    const rawScale = window.devicePixelRatio || 1;
+    const scale = Math.round(rawScale); // e.g., 1.1111 → 1
 
     // Set the canvas' internal resolution to match the display size, scaled for better display
     canvas.width = horizontalSize * scale;
     canvas.height = verticalSize * scale;
 
+    
     // Apply scaling to match the display resolution
     ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any previous transform
     ctx.scale(scale, scale);
 
     // Set canvas background to white
-    ctx.fillStyle = '#ffffff';
+    //ctx.fillStyle = '#ffffff';
 
     // Clear canvas (white background)
-    ctx.fillRect(0, 0, 200, 200);
+    //ctx.fillRect(0, 0, 200, 200);
 
     // Set font and text alignment
     ctx.font = '10px Monospace';
@@ -247,12 +245,21 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     //above:
     //const VOFFSET = 32;
     //const HOFFSET = 32;
-    // const gridOffsetX = 15
-    // const gridOffsetY = 20
+    // const gridOffsetX = 30
+    // const gridOffsetY = 40
+    
+    //other values for tuning cursor:
     // const fineTunedCursorXonGrid = -2
     // const fineTunedCursorYonGrid = 8
 
-    makeCanvas(VOFFSET*4 + HEIGHT*20, HOFFSET*4 + WIDTH*10)
+
+    
+        //predoubling:
+        makeCanvas(VOFFSET*4 + HEIGHT*20, HOFFSET*4 + WIDTH*10)
+       
+    
+   
+
 
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
@@ -263,16 +270,19 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         for (let j = 0; j < jValue; j++) {
             // Check if the current grid cell exists and is valid
             let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : ""; // Default to empty string if invalid
-            // Calculate the x and y positions based on the grid layout
-            // 6 locations before text starts
-            let xPos = j * 5 + 2*gridOffsetX;  
+            //thes offsets ar doubled because of scaling 
+            let xPos = j * 5 + gridOffsetX ;  
             
             //on inner margin
-            let yPos = i * 10 + 2*gridOffsetY
+            let yPos = i * 10 + gridOffsetY;
             // Render the text in the canvas at calculated positions
             ctx.fillText(cellText, xPos, yPos);
         }
     }
+    // Calculate the center of the canvas
+
+
+
 }
 
  

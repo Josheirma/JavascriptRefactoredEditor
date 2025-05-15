@@ -5,7 +5,7 @@ class RecursiveClass {
       this.bottomRowFromLastRound = [];
      
       this.hasBeenInZeroHorizPosition = false;
-      this.FlagForFinalRow = true;
+      
     }
 
 
@@ -53,9 +53,11 @@ getLastSpaceOrNull(grid, topRow) {
   const lastIndexOfDash = topRow.lastIndexOf("-");
   const lastIndexOfSpace = topRow.lastIndexOf(" ");
 
+  //@
   // Determine the rightmost index or default to full row length if none found
   const maxIndex = Math.max(lastIndexOfDash, lastIndexOfSpace, -1) === -1 ? topRow.length : Math.max(lastIndexOfDash, lastIndexOfSpace);
 
+ //@
   // Split at the position after the found dash or space
   const [leftSide, rightSide] = this.splitAtIndex(topRow, maxIndex + 1);
 
@@ -63,12 +65,11 @@ getLastSpaceOrNull(grid, topRow) {
 }
 
 pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
-  if (fromIndex) {
-    this.FlagForFinalRow = true;
-  }
+ 
   // Base case to stop recursion
   if (rowIndex >= HEIGHT) return grid; 
 
+  //@- why is it : -1
   let topRow = grid[rowIndex - 1] || [];
   //if there is a remainder add it to the bottom row.
   //let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
@@ -92,11 +93,13 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   let [firstWordBottomRow, phraseAfterLeftWordBottomRow] = this.splitAtIndex(bottomRow, lastIndexOfFirstWord);
   let lengthOfFirstWordBottomRow = firstWordBottomRow.length;
 
+  //count nulls after lengthoffirsteordbottomrow 
   let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
 
   
   //if the first column space is a dash than there is no character to cause overlap, so just get next row
   //is ready to be checked for overlap again
+  //handels no length too.
   if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
     return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
   }
@@ -106,13 +109,14 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   //is it enough space?
   if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
 
-    let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
-    drawGrid(HEIGHT, WIDTH);
-    let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
+    //let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
+    //drawGrid(HEIGHT, WIDTH);
+    //let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
     
 
     //there needs to be a word on left, so that the wrap will work.
     let totalLeftSidePhraseLength = lengthOfRightWordAtRowOne + lengthOfFirstWordBottomRow
+    //the left side is a word followed by null spaces for inserting
     let [leftmostTotalWordThatIsRemoved, restOfBottomRowWithoutLeftWord] = this.splitAtIndex(bottomRow, totalLeftSidePhraseLength);
     let combinedLowerRow = [...wordAtEndOfRowOne , ...firstWordBottomRow, ...restOfBottomRowWithoutLeftWord]
     
@@ -157,26 +161,13 @@ countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   return remaining;
 }
 
-
-
-// boundary handling
-handleCursorOverflow() {
-  // Ensure the cursor never exceeds the row width
-  if (horizontalCursorPosition >= WIDTH) {
-    horizontalCursorPosition = WIDTH - 1;
-  }
-  // Ensure vertical cursor doesn't exceed the grid height
-  if (verticalCursorPosition >= HEIGHT) {
-    verticalCursorPosition = HEIGHT - 1;
-  }
-}
-
-
-
+//@
 fillDashesInTopRow(grid, rowIndex, length) {
-  grid[rowIndex - 1].fill("-", WIDTH - length, WIDTH);
+  grid[rowIndex - 1].fill("-", WIDTH - length-1, WIDTH-1);
 }
 
+
+//splits right before index
 splitAtIndex(arr, index) {
   return [arr.slice(0, index), arr.slice(index)];
 }
@@ -199,10 +190,13 @@ splitAtIndex(arr, index) {
       if (remainder.length > 0 && remainder[0] !== "") {
         return [...remainder, ...topRow];
       } else {
-        //!
+        //@
         return [...bottomRightRow, ...topRow];
       }
     }
+    
+
+    /////////////////STOPPED HERE
     
     // Helper function to adjust the row for width and add dashes
     adjustRowForWidth(buildNextRow) {
@@ -300,6 +294,7 @@ splitAtIndex(arr, index) {
       return IsConnectedFlag
     }
 
+    //divides rows for enter
     divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder) {
     
       
