@@ -48,17 +48,18 @@ class RecursiveClass {
 
 //Finds the last occurrence of a space or dash in the row and splits the row accordingly
 
-getLastSpaceOrNull(grid, topRow) {
+getLastSpaceOrDash(grid, topRow) {
   // Get the index of the last dash and the last space
   const lastIndexOfDash = topRow.lastIndexOf("-");
   const lastIndexOfSpace = topRow.lastIndexOf(" ");
 
-  //@
+  
   // Determine the rightmost index or default to full row length if none found
   const maxIndex = Math.max(lastIndexOfDash, lastIndexOfSpace, -1) === -1 ? topRow.length : Math.max(lastIndexOfDash, lastIndexOfSpace);
 
- //@
-  // Split at the position after the found dash or space
+  
+  // Split at the position after the found dash or space 0 if no spaces or dashes, right side is entire row
+  // this could be moved to next row if it is empty
   const [leftSide, rightSide] = this.splitAtIndex(topRow, maxIndex + 1);
 
   return { leftSide, rightSide };
@@ -69,7 +70,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   // Base case to stop recursion
   if (rowIndex >= HEIGHT) return grid; 
 
-  //@- why is it : -1
+  //rowindex starts at 1from index.html, so 1 - 1 means row is on first row (index 0)
   let topRow = grid[rowIndex - 1] || [];
   //if there is a remainder add it to the bottom row.
   //let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
@@ -80,8 +81,8 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   
   bottomRow = grid[rowIndex]
 
-
-  let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrNull(grid, topRow);
+  //if no space or null, right side (wordatendofrowone) will be entire row.
+  let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrDash(grid, topRow);
   let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
 
   //last index of first word used on bottom
@@ -107,7 +108,8 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
 
   //is it enough space?
-  if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
+  //!if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
+  if (lengthOfRightWordAtRowOne <= remainingNullSpaces && lengthOfRightWordAtRowOne != 0) {
 
     //let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
     //drawGrid(HEIGHT, WIDTH);
@@ -161,9 +163,9 @@ countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   return remaining;
 }
 
-//@
+//!
 fillDashesInTopRow(grid, rowIndex, length) {
-  grid[rowIndex - 1].fill("-", WIDTH - length-1, WIDTH-1);
+  grid[rowIndex - 1].fill("-", WIDTH - length - 1, WIDTH);
 }
 
 
@@ -186,18 +188,39 @@ splitAtIndex(arr, index) {
     }
     
     // Helper function to combine rows with the remainder
-    combineRowsWithRemainder(bottomRightRow, topRow, remainder) {
+    //topRightRow, bottomRow
+
+    ///////////
+    
+    combineRowsWithRemainder(topRightRow, bottomRow, remainder) {
       if (remainder.length > 0 && remainder[0] !== "") {
-        return [...remainder, ...topRow];
+        
+       //Left overop 
+        return [...remainder, ...bottomRow];
       } else {
-        //@
-        return [...bottomRightRow, ...topRow];
+        //@top rigth with bottom
+        return [...topRightRow, ...bottomRow];
       }
     }
+
+    //////////// 
+
+
+    // //bottomRightRow, topRow, remainder
+    // combineRowsWithRemainder(topRightRow, bottomRow, remainder) {
+    //   if (remainder.length > 0 && remainder[0] !== "") {
+        
+    //    //Left overop 
+    //     return [...remainder, ...topRightRow, ...bottomRow];
+    //   } else {
+    //     //@top rigth with bottom
+    //     return [...topRightRow, ...bottomRow];
+    //   }
+    // }
     
 
     /////////////////STOPPED HERE
-    
+
     // Helper function to adjust the row for width and add dashes
     adjustRowForWidth(buildNextRow) {
       const [oneRowsWorth, newRemainder] = this.splitAtIndex(buildNextRow, WIDTH);
@@ -212,7 +235,8 @@ splitAtIndex(arr, index) {
     
     // Helper function to update the grid with the adjusted row
     updateGridRow(grid, rowIndex, oneRowsWorth) {
-      grid[rowIndex + 1] = oneRowsWorth;
+      
+      grid[rowIndex+1] = oneRowsWorth;
       drawGrid(HEIGHT, WIDTH);
     }
     
@@ -256,7 +280,7 @@ splitAtIndex(arr, index) {
       
         horizontalCursorPosition = 0;
       if(IsConnectedFlag && grid[rowIndex][0] != "-"){
-        horizontalCursorPosition = 5;
+        //horizontalCursorPosition = 5;
       }
       
       
@@ -295,7 +319,7 @@ splitAtIndex(arr, index) {
     }
 
     //divides rows for enter
-    divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder) {
+    divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder = []) {
     
       
       // Handle the base case to stop recursion
@@ -305,31 +329,38 @@ splitAtIndex(arr, index) {
       }
     
       // Get the rows to split
-      const { bottomRow, topRow } = this.getRowsToSplit(grid, rowIndex);
+      //const { bottomRow, topRow } = this.getRowsToSplit(grid, rowIndex);
     
+      let topRow = grid[rowIndex] 
+      let bottomRow = grid[rowIndex+1]
       // Split the rows at colIndex
       const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
       const [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
     
       // Combine the rows with the remainder
-      const buildNextRow = this.combineRowsWithRemainder(bottomRightRow, topRow, remainder);
+      //top right row , bottom row, remainder
+      //@
+      const buildNextRow = this.combineRowsWithRemainder(rightTopRow, bottomRow, remainder);
     
       // Adjust the row for the specified width and add dashes if necessary
+      //remainder is what is left after first top row
       const [oneRowsWorth, newRemainder] = this.adjustRowForWidth(buildNextRow);
     
       // Update the grid with the adjusted row
       this.updateGridRow(grid, rowIndex, oneRowsWorth);
     
       // Reposition the cursor if needed
-      this.repositionCursor(rowIndex, oneRowsWorth);
+      //this.repositionCursor(rowIndex, oneRowsWorth);
+      
     
       // Recursive call if there is still a remainder
       if (newRemainder.length > 0) {
+        // Draw the horizontal line
+      this.drawHorizontalLine(grid, rowIndex, colIndex);
         return this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
       }
     
-      // Draw the horizontal line
-      this.drawHorizontalLine(grid, rowIndex, colIndex);
+      
     
       return grid;
     }
@@ -468,7 +499,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   
   // Remove the rightmost character from the top row
   
-  //@
+  
   //const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
   const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length - 1);
 
