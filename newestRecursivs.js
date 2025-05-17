@@ -319,6 +319,11 @@ splitAtIndex(arr, index) {
     }
 
     //divides rows for enter
+    //by the time you have a remainder the content of the previous row isn't relevant - just the remainder is important 
+    
+    //top row done
+    // 2nd time around if there is remainder bottom row is now treated as the new top row 
+    // former bottom row is good just needs remiander to deal with
     divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder = []) {
     
       
@@ -334,7 +339,7 @@ splitAtIndex(arr, index) {
       let topRow = grid[rowIndex] 
       let bottomRow = grid[rowIndex+1]
       // Split the rows at colIndex
-      const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
+      //const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
       const [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
     
       // Combine the rows with the remainder
