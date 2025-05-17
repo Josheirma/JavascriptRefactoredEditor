@@ -72,12 +72,11 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
   //rowindex starts at 1from index.html, so 1 - 1 means row is on first row (index 0)
   let topRow = grid[rowIndex - 1] || [];
-  //if there is a remainder add it to the bottom row.
-  //let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
+  
   
   let bottomRow = []
   
-  /////
+ 
   
   bottomRow = grid[rowIndex]
 
@@ -108,12 +107,10 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
 
 
   //is it enough space?
-  //!if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
+  
   if (lengthOfRightWordAtRowOne <= remainingNullSpaces && lengthOfRightWordAtRowOne != 0) {
 
-    //let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
-    //drawGrid(HEIGHT, WIDTH);
-    //let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
+    
     
 
     //there needs to be a word on left, so that the wrap will work.
@@ -148,7 +145,8 @@ findLeftmostSpaceOrDash(row) {
 
 //of the row
 countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
-  if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0; // Prevent out-of-bounds access
+  // Prevent out-of-bounds access
+  if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0; 
 
   let remaining = 0;
 
@@ -163,7 +161,7 @@ countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   return remaining;
 }
 
-//!
+
 fillDashesInTopRow(grid, rowIndex, length) {
   grid[rowIndex - 1].fill("-", WIDTH - length - 1, WIDTH);
 }
@@ -187,11 +185,16 @@ splitAtIndex(arr, index) {
       return { bottomRow, topRow };
     }
     
-    // Helper function to combine rows with the remainder
-    //topRightRow, bottomRow
-
-    ///////////
     
+    
+
+
+
+    ///////////////////START HERE///////////////
+    
+
+
+    // Helper function to combine rows with the remainder
     combineRowsWithRemainder(topRightRow, bottomRow, remainder) {
       if (remainder.length > 0 && remainder[0] !== "") {
         
