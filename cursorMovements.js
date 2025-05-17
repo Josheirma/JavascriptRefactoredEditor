@@ -27,7 +27,7 @@ cursorRightOneSpace() {
   // Check if the cursor has reached the maximum grid position (based on width and height)
   if (horizontalCursorPosition / 5 >= WIDTH - 1 && verticalCursorPosition / 10 >= HEIGHT - 1) {
       // No action needed if the cursor is at the grid's edge
-      // horizontalCursorPosition = horizontalCursorPosition + 5; // Commented out, unused action
+      
   } 
   // If the horizontal position exceeds the canvas width, reset and move down vertically
   else if (horizontalCursorPosition >= WIDTH * 5) {

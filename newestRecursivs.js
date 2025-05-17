@@ -198,28 +198,12 @@ splitAtIndex(arr, index) {
        //Left overop 
         return [...remainder, ...bottomRow];
       } else {
-        //@top rigth with bottom
+        //top rigth with bottom
         return [...topRightRow, ...bottomRow];
       }
     }
 
-    //////////// 
-
-
-    // //bottomRightRow, topRow, remainder
-    // combineRowsWithRemainder(topRightRow, bottomRow, remainder) {
-    //   if (remainder.length > 0 && remainder[0] !== "") {
-        
-    //    //Left overop 
-    //     return [...remainder, ...topRightRow, ...bottomRow];
-    //   } else {
-    //     //@top rigth with bottom
-    //     return [...topRightRow, ...bottomRow];
-    //   }
-    // }
     
-
-    /////////////////STOPPED HERE
 
     // Helper function to adjust the row for width and add dashes
     adjustRowForWidth(buildNextRow) {
@@ -255,6 +239,8 @@ splitAtIndex(arr, index) {
         }
       }
     }
+    
+
     
     pressedEnter(grid, rowIndex, colIndex, remainder, IsFirstTime, counter) {
 
@@ -318,6 +304,16 @@ splitAtIndex(arr, index) {
       return IsConnectedFlag
     }
 
+    
+    /*
+     On the first pass, there is no remainder, so checkIfInWordAgainstRightSide tacks from the top-right to the bottom — straightforward. At this point, the resulting string is longer than the grid's width. It is sliced at the width limit, and the overflow becomes the newRemainder string. The portion that fits — oneRowsWorth — is copied into the grid, character by character.
+
+    The newRemainder is then returned through the recursive call. The top section was already filled during the previous step, and now the bottom section is ready to be populated again. From this point forward, combineRowsWithRemainder will attach the function's remainder to the bottom on every call. Since the bottom is always the full width, there will always be overflow — and therefore always a new remainder passed along.
+    
+    adjustRowForWidth will again produce a row of the specified width along with a new remainder. This new remainder is passed recursively and becomes the next input for the following step. The process continues until there are no more characters left to fill additional rows.
+    
+    its like the same length word that is combined and removed produces a new string with the remainder.  In a run of the function, the remainder and newremainder is just (respectively) added to the front and removed from back, same length string, like a sliding window (could chat with Chatbot, i.e., ChatGPT)*/
+
     //divides rows for enter
     divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder = []) {
     
@@ -339,7 +335,7 @@ splitAtIndex(arr, index) {
     
       // Combine the rows with the remainder
       //top right row , bottom row, remainder
-      //@
+      
       const buildNextRow = this.combineRowsWithRemainder(rightTopRow, bottomRow, remainder);
     
       // Adjust the row for the specified width and add dashes if necessary

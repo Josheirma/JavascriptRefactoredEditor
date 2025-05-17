@@ -26,9 +26,22 @@ enforceGridConsistency(grid) {
 let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
 
 
+const insertButton = document.getElementById("insert");
+
+insertButton.innerHTML = insertOn ? "Insert" : "On Top";
+
+
+// Save a deep copy of the current grid state (with dashes) for future restoration
+        copy2DimArray = gridArray.map(arr => [...arr]);
+
+        let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
+
+        
 
 ////to understand ///////////
 
 check all conditions with entire row and one less than entire row
 push, with no dashes or spaces, check for dashes when move word down
 check move word down that dashes always worke
+
+
