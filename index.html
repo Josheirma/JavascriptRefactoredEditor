@@ -20,13 +20,13 @@
     let inserting;
     let dashing;
    
-    // Initialize the classes for cursor movement and recursion (assumed to be defined elsewhere)
+    // Initialize the classes for cursor movement and recursion 
   document.addEventListener("DOMContentLoaded", () => {
   CursorMovements = new CursorMovementsClass();
   Recursive = new RecursiveClass();
   inserting = document.getElementById('insert')
   dashing = document.getElementById('areDashes')
-  // Add event listener to Button 1
+  // Add event listener to Buttons
   // Check if buttons exist before adding event listeners
   if (inserting) {
     inserting.addEventListener('pointerdown', handleInsertButtonClick);
@@ -46,7 +46,8 @@
     
     // Dash character to replace spaces for display
     let DASH = '-';
-    let areDashes = true; // Flag to toggle dash display instead of spaces
+    // Flag to toggle dash display instead of spaces
+    let areDashes = true; 
 </script>
 
 <!-- Canvas element for rendering content -->
@@ -83,7 +84,7 @@ Javascript Text Editor
   //Max rows before any create rows
   
   
-  //fo
+ 
   let gridArray = [
     
     ["1", "2", "A", "A", "A", "A" , "A", "A", "A", "A", "A", "A", "A" , "A", "A", "A", "1", "A", "A", "A" , "A","A", "A", "A", "A", "A", "1", "2" ],
@@ -160,7 +161,7 @@ Javascript Text Editor
  
 
 
-  // Copy grid (ensure it's used somewhere in your logic)
+  
   let copy2DimArray = [];
 
   // Canvas and context
@@ -229,9 +230,11 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
    
     // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
+    // Exit the function early if the grid is invalid
+
     if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
         console.log("bad array");
-        return; // Exit the function early if the grid is invalid
+        return; 
     }
 
     
@@ -252,10 +255,10 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
             // Default to empty string if invalid
             // gets correct value from grid to place in the right cell
             let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : ""; 
-            //thes offsets ar doubled because of scaling 
+           
             let xPos = j * HORIZONTALSTEP + GRIDOFFSETX ;  
             
-            //on inner margin
+           
             let yPos = i * VERTICALSTEP + GRIDOFFSETY;
             // Render the text in the canvas at calculated positions
             ctx.fillText(cellText, xPos, yPos);
@@ -267,8 +270,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
 }
 
-///////////////////HERE
- 
+
   //HOFFSET and VOFFEST (these are graphical offsets) are passed in with any additional x and y - uses:  verticalCursorPosition,  horizontalCursorPosition
   function drawCursor(x,y){
     
@@ -419,27 +421,32 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
     // This function handles the cursor movements and function calls based on key presses
     function cursorAndFunctionCalls(event) {
-    // Display the current cursor positions (this line is currently commented out)
+    // Display the current cursor positions 
     // displayCursorLocations();
 
     // Check if the key pressed is in the preventKeys array, and if so, return without doing anything
     for (let i = 0; i < preventKeys.length; i++) {
         if (preventKeys[i] == gKey) {
-            return;  // Exit the function if the key is in the preventKeys list
+            // Exit the function if the key is in the preventKeys list
+            return;  
         }
     }
 
     // Handle cursor movement based on arrow keys
-    if (keyState[39]) {  // Right arrow
+    // Right arrow
+    if (keyState[39]) {  
         CursorMovements.cursorRight();
     }
-    else if (keyState[37]) {  // Left arrow
+    // Left arrow
+    else if (keyState[37]) {  
         CursorMovements.cursorLeft();
     }
-    else if (keyState[38]) {  // Up arrow
+    // Up arrow
+    else if (keyState[38]) {  
         CursorMovements.cursorUp();
     }
-    else if (keyState[40]) {  // Down arrow
+     // Down arrow
+    else if (keyState[40]) { 
         CursorMovements.cursorDown();
     }
 
@@ -466,8 +473,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         }
     }
 
-    // Ensure that words within the grid don't overflow and adjust if needed
-
+    
     //null - remainder
     //1 - index
      // true - is first time function has been called, this round
