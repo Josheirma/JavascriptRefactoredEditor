@@ -122,13 +122,16 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     
     
     grid[rowIndex] = combinedLowerRow;
+    //overrights old word, when word is drawn to next row
+    this.replaceTopRowOnlyWithDashes(grid, rowIndex, lengthOfRightWordAtRowOne);
     drawGrid(HEIGHT, WIDTH);
     
-    this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
+    
 
     return this.pushWordsDoThisSecond(grid, [""], rowIndex+1, false);
   }
 
+  
 
 
 
@@ -161,8 +164,8 @@ countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   return remaining;
 }
 
-
-fillDashesInTopRow(grid, rowIndex, length) {
+//for replacing variable that was drawn to below, with dashes
+replaceTopRowOnlyWithDashes(grid, rowIndex, length) {
   grid[rowIndex - 1].fill("-", WIDTH - length - 1, WIDTH);
 }
 
@@ -212,11 +215,6 @@ splitAtIndex(arr, index) {
     adjustRowForWidth(buildNextRow) {
       const [oneRowsWorth, newRemainder] = this.splitAtIndex(buildNextRow, WIDTH);
     
-      // Fill remaining null spaces with dashes
-      for (let i = oneRowsWorth.length; i < WIDTH; i++) {
-        oneRowsWorth[i] = "-";
-      }
-    
       return [oneRowsWorth, newRemainder];
     }
     
@@ -224,21 +222,23 @@ splitAtIndex(arr, index) {
     updateGridRow(grid, rowIndex, oneRowsWorth) {
       
       grid[rowIndex+1] = oneRowsWorth;
-      drawGrid(HEIGHT, WIDTH);
+      //drawGrid(HEIGHT, WIDTH);
     }
     
     // Helper function to reposition the cursor
     repositionCursor(rowIndex, oneRowsWorth) {
-      if (rowIndex === Math.floor(verticalCursorPosition / 10)) {
+      
+      //if (rowIndex === Math.floor(verticalCursorPosition / 10)) {
         horizontalCursorPosition = oneRowsWorth.length * 5 + 5;
-      }
+      //}
     }
     
-    // Helper function to draw the horizontal line
-    drawHorizontalLine(grid, rowIndex, colIndex) {
-      if (Math.floor(verticalCursorPosition / 10) < HEIGHT) {
+     replaceDashesWithOldWord(grid, rowIndex, colIndex) {
+
+      
+      if ((verticalCursorPosition / 10) < HEIGHT) {
         for (let i = colIndex; i < WIDTH; i++) {
-          grid[Math.floor(verticalCursorPosition / 10)][i] = "-";
+          grid[(verticalCursorPosition / 10)][i] = "-";
         }
       }
     }
@@ -266,24 +266,26 @@ splitAtIndex(arr, index) {
         this.divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder.length > 0 ? remainder : [""]);
       }
     
+        
+       
+      // if(IsConnectedFlag && grid[rowIndex][0] != "-"){
+      //   //horizontalCursorPosition = 5;
+      // }
       
-        horizontalCursorPosition = 0;
-      if(IsConnectedFlag && grid[rowIndex][0] != "-"){
-        //horizontalCursorPosition = 5;
-      }
       
-      
-      
+         horizontalCursorPosition = 0;
         verticalCursorPosition += 10;
      
     
       // Ensure cursor stays within grid boundaries
+      //!
       verticalCursorPosition = Math.min(verticalCursorPosition, (HEIGHT - 1) * 10);
     
       // Draw the cursor at the new position
       drawCursor(horizontalCursorPosition + HOFFSET, verticalCursorPosition + VOFFSET);
     
       // Stop recursion if no remainder is left (after devidenextrowsasneeded recursion)
+      //!
       if (remainder.length === 0) {
         return grid;
       }
@@ -354,8 +356,7 @@ splitAtIndex(arr, index) {
     
       // Recursive call if there is still a remainder
       if (newRemainder.length > 0) {
-        // Draw the horizontal line
-      this.drawHorizontalLine(grid, rowIndex, colIndex);
+      this.replaceDashesWithOldWord(grid, rowIndex, colIndex);
         return this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
       }
     
@@ -382,6 +383,9 @@ splitAtIndex(arr, index) {
       let combine = [];
       //is the column index not on the first character
       if (columnIndex !== 0) {
+        //!return [arr.slice(0, index), arr.slice(index)];
+        //returns string from zero to index - exclusive
+        //also returns another strin from index until emd
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
         let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
         combine = [...topRowLeft, ...topRowRightWithoutFirst];
@@ -401,6 +405,9 @@ splitAtIndex(arr, index) {
       
       return grid;
     }
+
+
+    /////////////LEFT OFF HERE
     
 
 
@@ -412,6 +419,7 @@ splitAtIndex(arr, index) {
       if (columnIndex === 0) {
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
       } else {
+        //slice
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex - 1);
       }
     

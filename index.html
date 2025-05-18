@@ -141,15 +141,15 @@ Javascript Text Editor
   
 
     //Canvas and Grid constants
-    //coarse adjsutment for cursor offset to grid
+    //Moves grid around
     const VOFFSET = 32;
     const HOFFSET = 32;
     //other values for tuning cursor:
-    const FINETUNEDCURSORXONGRID = 1
-    const FINETUNEDCURSORYONGRID = 8
+    const FINETUNEDCURSORXONGRID = -8
+    const FINETUNEDCURSORYONGRID = -1
     //between outer canvas and grid
-    const GRIDOFFSETX = 33;
-    const GRIDOFFSETY = 40;
+    const GRIDOFFSETX =24;
+    const GRIDOFFSETY = 31;
     
     //a single step amount of pixels
     const HORIZONTALSTEP = 5;
@@ -197,10 +197,9 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     //const scale = window.devicePixelRatio;
     //const scale = 1
     
-    //scales (rounds next row)
-    const rawScale = window.devicePixelRatio || 1;
-    // e.g., 1.1111 → 1
-    const scale = Math.round(rawScale); 
+    const scale = window.devicePixelRatio || 1;
+    
+    
 
     //starts with a canvas with verticalsize: 190, and horizontalsize: 200 and scales it up to make bigger
     canvas.width = horizontalSize * scale;

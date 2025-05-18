@@ -40,8 +40,11 @@ insertButton.innerHTML = insertOn ? "Insert" : "On Top";
 
 ////to understand ///////////
 
-check all conditions with entire row and one less than entire row
-push, with no dashes or spaces, check for dashes when move word down
-check move word down that dashes always worke
+//check all conditions with entire row and one less than entire row
+//push, with no dashes or spaces, check for dashes when move word down
+//check move word down that dashes always worke
 
 
+//replaceWithDashesOnTopRight  =  replaceDashesWithOldWord
+
+//replaceWithDashesInTopRow  = replaceTopRowOnlyWithDashes
