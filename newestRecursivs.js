@@ -3,9 +3,9 @@ class RecursiveClass {
       this.lastRowIndexToPushOn = -1;
       this.bottomRow = -1;
       this.bottomRowFromLastRound = [];
-      this.tracksRow = 0;
+     
       this.hasBeenInZeroHorizPosition = false;
-      this.FlagForFinalRow = true;
+      
     }
 
 
@@ -14,18 +14,21 @@ class RecursiveClass {
   deleteRow(arr, rowNumber) {
   // Ensure rowNumber is within valid bounds
   if (rowNumber >= 0 && rowNumber < arr.length) {
-    arr.splice(rowNumber, 1); // Remove the row at the specified index
+    // Remove the row at the specified index
+    arr.splice(rowNumber, 1); 
   } else {
-    console.error("Invalid row number: out of bounds"); // Error handling for invalid index
+    // Error handling for invalid index
+    console.error("Invalid row number: out of bounds"); 
   }
 
-  return arr; // Return the modified array
+  // Return the modified array
+  return arr; 
 }
 
 
   // Adds a new row with placeholder values to the grid at the specified rowIndex
-  //3/5/25 - chatGPT
-  createRow(grid, rowIndex) {
+  
+  createRow(grid) {
   // Define a new row with placeholders ("-") for each column
   const newRow = [
     "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", 
@@ -36,90 +39,99 @@ class RecursiveClass {
   
   // Increment HEIGHT to reflect the new row added to the grid
   HEIGHT++;
+  
   // Return the modified grid with the newly added row
   return grid;
 }
 
 
-//3/4/25 chatGPT 
+
 //Finds the last occurrence of a space or dash in the row and splits the row accordingly
-//3/4/25 ChatGpt - fixed too
-getLastSpaceOrNull(grid, topRow) {
+
+getLastSpaceOrDash(grid, topRow) {
   // Get the index of the last dash and the last space
   const lastIndexOfDash = topRow.lastIndexOf("-");
   const lastIndexOfSpace = topRow.lastIndexOf(" ");
 
+  
   // Determine the rightmost index or default to full row length if none found
   const maxIndex = Math.max(lastIndexOfDash, lastIndexOfSpace, -1) === -1 ? topRow.length : Math.max(lastIndexOfDash, lastIndexOfSpace);
 
-  // Split at the position after the found dash or space
+  
+  // Split at the position after the found dash or space 0 if no spaces or dashes, right side is entire row
+  // this could be moved to next row if it is empty
   const [leftSide, rightSide] = this.splitAtIndex(topRow, maxIndex + 1);
 
   return { leftSide, rightSide };
 }
 
-
-// 3/3/25 - ChatGPT
-// Global Flag Initialization	
-// splitAtIndex() Fallback	
-// repositionCursor() Call	 
-// Infinite Recursion Check	
-// newRemainder Reset	
-
 pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
-  if (fromIndex) {
-    this.FlagForFinalRow = true;
-  }
-  if (rowIndex >= HEIGHT) return grid; // Base case to stop recursion
+ 
+  // Base case to stop recursion
+  if (rowIndex >= HEIGHT) return grid; 
 
+  //rowindex starts at 1from index.html, so 1 - 1 means row is on first row (index 0)
   let topRow = grid[rowIndex - 1] || [];
-  //!
-  let bottomRow = newRemainder[0] !== "" ? [...newRemainder, ...grid[rowIndex]] : grid[rowIndex];
+  
+  
+  let bottomRow = []
+  
+ 
+  
+  bottomRow = grid[rowIndex]
 
-  let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrNull(grid, topRow);
+  //if no space or null, right side (wordatendofrowone) will be entire row.
+  let { rightSide: wordAtEndOfRowOne } = this.getLastSpaceOrDash(grid, topRow);
   let lengthOfRightWordAtRowOne = wordAtEndOfRowOne.length;
 
   //last index of first word used on bottom
   let lastIndexOfFirstWord = this.findLeftmostSpaceOrDash(bottomRow);
-  if (lastIndexOfFirstWord === -1) lastIndexOfFirstWord = WIDTH; // Safety fallback
+  // Safety fallback
 
+  //no space or dash
+  if (lastIndexOfFirstWord === -1) lastIndexOfFirstWord = WIDTH; 
   let [firstWordBottomRow, phraseAfterLeftWordBottomRow] = this.splitAtIndex(bottomRow, lastIndexOfFirstWord);
   let lengthOfFirstWordBottomRow = firstWordBottomRow.length;
 
+  //count nulls after lengthoffirsteordbottomrow 
   let remainingNullSpaces = this.countRemainingNullsAndSpaces(grid, rowIndex, lengthOfFirstWordBottomRow);
 
-  //@
-
+  
+  //if the first column space is a dash than there is no character to cause overlap, so just get next row
+  //is ready to be checked for overlap again
+  //handels no length too.
   if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
     return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
   }
 
 
 
+  //is it enough space?
+  
+  if (lengthOfRightWordAtRowOne <= remainingNullSpaces && lengthOfRightWordAtRowOne != 0) {
 
-  if (lengthOfRightWordAtRowOne < remainingNullSpaces) {
-
-    let combined = [...wordAtEndOfRowOne, ...firstWordBottomRow, ...phraseAfterLeftWordBottomRow];
-    drawGrid(HEIGHT, WIDTH);
-    let [newBottomRow, newRemainder] = this.splitAtIndex(combined, WIDTH);
     
-    //!
-    newRemainder = this.getLastSpaceOrNull(grid, newRemainder).rightSide || [];
-    let lengthOfNewRemainder = newRemainder.length
+    
+
+    //there needs to be a word on left, so that the wrap will work.
     let totalLeftSidePhraseLength = lengthOfRightWordAtRowOne + lengthOfFirstWordBottomRow
+    //the left side is a word followed by null spaces for inserting
     let [leftmostTotalWordThatIsRemoved, restOfBottomRowWithoutLeftWord] = this.splitAtIndex(bottomRow, totalLeftSidePhraseLength);
     let combinedLowerRow = [...wordAtEndOfRowOne , ...firstWordBottomRow, ...restOfBottomRowWithoutLeftWord]
-    this.repositionCursorForPush(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
+    
+    
+    
     grid[rowIndex] = combinedLowerRow;
+    //overrights old word, when word is drawn to next row
+    this.replaceTopRowOnlyWithDashes(grid, rowIndex, lengthOfRightWordAtRowOne);
     drawGrid(HEIGHT, WIDTH);
-    this.fillDashesInTopRow(grid, rowIndex, lengthOfRightWordAtRowOne);
+    
+    
 
-    let nextRowIndex = this.FlagForNewEndPush ? rowIndex : rowIndex + 1;
-    this.FlagForNewEndPush = false;
-
-    return this.pushWordsDoThisSecond(grid, [""], nextRowIndex, false);
+    return this.pushWordsDoThisSecond(grid, [""], rowIndex+1, false);
   }
 
+  
 
 
 
@@ -127,22 +139,24 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
 }
 
-// - missing functionality
+
 findLeftmostSpaceOrDash(row) {
   return [row.indexOf(" "), row.indexOf("-")]
     .map(index => index === -1 ? WIDTH : index)
     .reduce((min, curr) => Math.min(min, curr));
 }
 
-// - missing functionality
+//of the row
 countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
-  if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0; // Prevent out-of-bounds access
+  // Prevent out-of-bounds access
+  if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0; 
 
   let remaining = 0;
 
   for (let i = startIdx; i < WIDTH; i++) {
     if (grid[rowIndex][i] !== "-" && grid[rowIndex][i] !== null) {
-      break; // Stop counting on non-empty characters
+      // Stop counting on non-empty characters
+      break; 
     }
     remaining++;
   }
@@ -150,72 +164,17 @@ countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   return remaining;
 }
 
-// - missing functionality
-repositionCursorForPush(grid,rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
-  if (this.handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow)) return;
-  this.handleCursorInBottomRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow);
+//for replacing variable that was drawn to below, with dashes
+replaceTopRowOnlyWithDashes(grid, rowIndex, length) {
+  grid[rowIndex - 1].fill("-", WIDTH - length - 1, WIDTH);
 }
 
 
-
-// - missing functionality
-handleCursorInTopRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
-  
-  // Ensure we're within bounds of the top row and the cursor is properly aligned
-  for (let i = WIDTH - wordAtEndOfRowOne.length; i < WIDTH; i++) {
-    if (grid[rowIndex][0] !== "-" && verticalCursorPosition / 10 === rowIndex - 1 && horizontalCursorPosition / 5 === i + 1) {
-      verticalCursorPosition = rowIndex * 10;
-      horizontalCursorPosition = (wordAtEndOfRowOne.length + firstWordBottomRow.length) * 5;  // Move cursor after combined word
-      return true;
-    }
-    else if (grid[rowIndex][0] !== "-" && verticalCursorPosition / 10 === rowIndex  && horizontalCursorPosition / 5 === 0) {
-
-      const lengthOfCompleteWordOnBottomLeft =  wordAtEndOfRowOne.length + firstWordBottomRow.length
-      horizontalCursorPosition = (lengthOfCompleteWordOnBottomLeft-1) * 5 + 5;
-      drawGrid(HEIGHT, WIDTH)
-    }
-  }
-  return false;
-}
-// - missing functionality
-handleCursorInBottomRow(grid, rowIndex, wordAtEndOfRowOne, firstWordBottomRow) {
-  // Ensure cursor placement in the bottom row
-  for (let i = 0; i < firstWordBottomRow.length; i++) {
-    // Check if we're in the right position and not in a dash
-    if (grid[rowIndex - 1][WIDTH - 1] !== "-" && verticalCursorPosition / 10 === rowIndex && horizontalCursorPosition / 5 === i + 1) {
-      horizontalCursorPosition = (wordAtEndOfRowOne.length + firstWordBottomRow.length) * 5 ; // Move cursor to combined word's end
-      break;
-    }
-  }
-}
-
-// - missing functionality
-// Optional overflow boundary handling
-handleCursorOverflow() {
-  // Ensure the cursor never exceeds the row width
-  if (horizontalCursorPosition >= WIDTH) {
-    horizontalCursorPosition = WIDTH - 1;
-  }
-  // Ensure vertical cursor doesn't exceed the grid height
-  if (verticalCursorPosition >= HEIGHT) {
-    verticalCursorPosition = HEIGHT - 1;
-  }
-}
-
-
-
-fillDashesInTopRow(grid, rowIndex, length) {
-  grid[rowIndex - 1].fill("-", WIDTH - length, WIDTH);
-}
-
+//splits right before index
 splitAtIndex(arr, index) {
   return [arr.slice(0, index), arr.slice(index)];
 }
 
-    // Helper function to increment row tracking
-    incrementRowTracking() {
-      this.tracksRow++;
-    }
     
     // Helper function to handle the base case (stop recursion)
     handleBaseCase(rowIndex) {
@@ -229,86 +188,104 @@ splitAtIndex(arr, index) {
       return { bottomRow, topRow };
     }
     
+    
+    
+
+
+
+    ///////////////////START HERE///////////////
+    
+
+
     // Helper function to combine rows with the remainder
-    combineRowsWithRemainder(bottomRightRow, topRow, remainder) {
+    combineRowsWithRemainder(topRightRow, bottomRow, remainder) {
       if (remainder.length > 0 && remainder[0] !== "") {
-        return [...remainder, ...topRow];
+        
+       //Left overop 
+        return [...remainder, ...bottomRow];
       } else {
-        //!
-        return [...bottomRightRow, ...topRow];
+        //top rigth with bottom
+        return [...topRightRow, ...bottomRow];
       }
     }
+
     
+
     // Helper function to adjust the row for width and add dashes
     adjustRowForWidth(buildNextRow) {
       const [oneRowsWorth, newRemainder] = this.splitAtIndex(buildNextRow, WIDTH);
-    
-      // Fill remaining null spaces with dashes
-      for (let i = oneRowsWorth.length; i < WIDTH; i++) {
-        oneRowsWorth[i] = "-";
-      }
     
       return [oneRowsWorth, newRemainder];
     }
     
     // Helper function to update the grid with the adjusted row
     updateGridRow(grid, rowIndex, oneRowsWorth) {
-      grid[rowIndex + 1] = oneRowsWorth;
-      drawGrid(HEIGHT, WIDTH);
+      
+      grid[rowIndex+1] = oneRowsWorth;
+      //drawGrid(HEIGHT, WIDTH);
     }
     
     // Helper function to reposition the cursor
     repositionCursor(rowIndex, oneRowsWorth) {
-      if (rowIndex === Math.floor(verticalCursorPosition / 10)) {
+      
+      //if (rowIndex === Math.floor(verticalCursorPosition / 10)) {
         horizontalCursorPosition = oneRowsWorth.length * 5 + 5;
-      }
+      //}
     }
     
-    // Helper function to draw the horizontal line
-    drawHorizontalLine(grid, rowIndex, colIndex) {
-      if (Math.floor(verticalCursorPosition / 10) < HEIGHT) {
+     replaceDashesWithOldWord(grid, rowIndex, colIndex) {
+
+      
+      if ((verticalCursorPosition / 10) < HEIGHT) {
         for (let i = colIndex; i < WIDTH; i++) {
-          grid[Math.floor(verticalCursorPosition / 10)][i] = "-";
+          grid[(verticalCursorPosition / 10)][i] = "-";
         }
       }
     }
     
 
-    //3/4/25 ChatGPT
-    // - missing fucnitonality
-    // Grid Overflow	
-    // First-Time Handling	
-    // Cursor Reset	
-    // Remainder Safety	
-    // Recursion Stop Condition
+    
     pressedEnter(grid, rowIndex, colIndex, remainder, IsFirstTime, counter) {
+
+      let IsConnectedFlag = true;
       // Base case: Prevent overflow if the cursor moves beyond grid height
       if (rowIndex >  HEIGHT - 1) return grid;
     
       // Create a new row at the specified row index
       this.createRow(grid, rowIndex);
     
+      // Reset horizontal cursor position - adjust cursor
+      horizontalCursorPosition = 0;
+
+      //if is, set flag to put cursor on second column
+      IsConnectedFlag = this.checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag);
+
       // Only call divideNextRowsAsNeeded if there is a valid remainder or if it's the first-time press
       if (remainder.length > 0 || IsFirstTime) {
+        // Merges rows into new entries whenever the Enter key is pressed
         this.divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder.length > 0 ? remainder : [""]);
       }
     
-      // Reset horizontal cursor position
-      horizontalCursorPosition = 0;
-    
-      //!
-      // Move vertical cursor down only if it's not the first-time press
-      if (1) {
+        
+       
+      // if(IsConnectedFlag && grid[rowIndex][0] != "-"){
+      //   //horizontalCursorPosition = 5;
+      // }
+      
+      
+         horizontalCursorPosition = 0;
         verticalCursorPosition += 10;
-      }
+     
     
       // Ensure cursor stays within grid boundaries
+      //!
       verticalCursorPosition = Math.min(verticalCursorPosition, (HEIGHT - 1) * 10);
     
       // Draw the cursor at the new position
       drawCursor(horizontalCursorPosition + HOFFSET, verticalCursorPosition + VOFFSET);
     
-      // Stop recursion if no remainder is left
+      // Stop recursion if no remainder is left (after devidenextrowsasneeded recursion)
+      //!
       if (remainder.length === 0) {
         return grid;
       }
@@ -317,15 +294,34 @@ splitAtIndex(arr, index) {
       return this.pressedEnter(grid, rowIndex + 1, colIndex, remainder, false, counter + 1);
     }
 
-     //3/4/25 - ChatGpt
-    // - missing fucnitonality
-    // Bounds Checking	
-    // Remaining Spaces Filling		✅
-    // Cursor Repositioning	
-    // Recursive Continuation	
-    // Grid Overflow Protection
-    divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder) {
-      this.incrementRowTracking();
+    //checks to see if in a word against right hand margin
+    checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag){
+      
+      for(let i = colIndex; i < WIDTH-1 ; i++){
+        if (grid[rowIndex][i] === "-"){
+          IsConnectedFlag = false;
+          break;
+
+        }
+        
+      }
+
+      return IsConnectedFlag
+    }
+
+    
+    /*
+     On the first pass, there is no remainder, so checkIfInWordAgainstRightSide tacks from the top-right to the bottom — straightforward. At this point, the resulting string is longer than the grid's width. It is sliced at the width limit, and the overflow becomes the newRemainder string. The portion that fits — oneRowsWorth — is copied into the grid, character by character.
+
+    The newRemainder is then returned through the recursive call. The top section was already filled during the previous step, and now the bottom section is ready to be populated again. From this point forward, combineRowsWithRemainder will attach the function's remainder to the bottom on every call. Since the bottom is always the full width, there will always be overflow — and therefore always a new remainder passed along.
+    
+    adjustRowForWidth will again produce a row of the specified width along with a new remainder. This new remainder is passed recursively and becomes the next input for the following step. The process continues until there are no more characters left to fill additional rows.
+    
+    its like the same length word that is combined and removed produces a new string with the remainder.  In a run of the function, the remainder and newremainder is just (respectively) added to the front and removed from back, same length string, like a sliding window (could chat with Chatbot, i.e., ChatGPT)*/
+
+    //divides rows for enter
+    divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder = []) {
+    
       
       // Handle the base case to stop recursion
       if (this.handleBaseCase(rowIndex)) {
@@ -334,41 +330,44 @@ splitAtIndex(arr, index) {
       }
     
       // Get the rows to split
-      const { bottomRow, topRow } = this.getRowsToSplit(grid, rowIndex);
+      //const { bottomRow, topRow } = this.getRowsToSplit(grid, rowIndex);
     
+      let topRow = grid[rowIndex] 
+      let bottomRow = grid[rowIndex+1]
       // Split the rows at colIndex
       const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
       const [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
     
       // Combine the rows with the remainder
-      const buildNextRow = this.combineRowsWithRemainder(bottomRightRow, topRow, remainder);
+      //top right row , bottom row, remainder
+      
+      const buildNextRow = this.combineRowsWithRemainder(rightTopRow, bottomRow, remainder);
     
       // Adjust the row for the specified width and add dashes if necessary
+      //remainder is what is left after first top row
       const [oneRowsWorth, newRemainder] = this.adjustRowForWidth(buildNextRow);
     
       // Update the grid with the adjusted row
       this.updateGridRow(grid, rowIndex, oneRowsWorth);
     
       // Reposition the cursor if needed
-      this.repositionCursor(rowIndex, oneRowsWorth);
+      //this.repositionCursor(rowIndex, oneRowsWorth);
+      
     
       // Recursive call if there is still a remainder
       if (newRemainder.length > 0) {
-        this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
+      this.replaceDashesWithOldWord(grid, rowIndex, colIndex);
+        return this.divideNextRowsAsNeeded(grid, colIndex, rowIndex + 1, newRemainder);
       }
     
-      // Draw the horizontal line
-      this.drawHorizontalLine(grid, rowIndex, colIndex);
+      
     
       return grid;
     }
     
 
-
-
-    ////////////start
-
     deleteAndPullCharacters(rowIndex, columnIndex, grid) {
+      // Apply special handling if this is the last row based on its height
       if (rowIndex > HEIGHT - 2) {
         grid = this.handleLastRow(rowIndex, columnIndex, grid);
       } else {
@@ -378,29 +377,37 @@ splitAtIndex(arr, index) {
       return grid;
     }
     
-    //3/7/25
+    //for deleting 
     handleLastRow(rowIndex, columnIndex, grid) {
       let topRow = grid[rowIndex];
       let combine = [];
-      
+      //is the column index not on the first character
       if (columnIndex !== 0) {
+        //!return [arr.slice(0, index), arr.slice(index)];
+        //returns string from zero to index - exclusive
+        //also returns another strin from index until emd
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
         let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
         combine = [...topRowLeft, ...topRowRightWithoutFirst];
       } else {
+        //the cursor is on the left most space, when that is deleted
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
         let [leftChrRemoved, rightAfterFirst] = this.splitAtIndex(topRowRight, 1);
         combine = [...rightAfterFirst];
-    
+        //delete on lower left , deletes upper right hand side character
         grid[HEIGHT - 2][WIDTH - 1] = grid[HEIGHT - 1][0];
       }
     
       CursorMovements.cursorLeft();
       grid[rowIndex] = combine;
+      //final character was deleted so add dash
       grid[HEIGHT - 1][WIDTH - 1] = "-";
       
       return grid;
     }
+
+
+    /////////////LEFT OFF HERE
     
 
 
@@ -408,35 +415,32 @@ splitAtIndex(arr, index) {
       let topRow = grid[rowIndex];
       let bottomRow = grid[rowIndex + 1];
       let topLeftRow, topRightRow;
-      
+      // deletes the character on the top right, so this will be handled below
       if (columnIndex === 0) {
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
       } else {
+        //slice
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex - 1);
       }
     
       let [leftDiscarded, topRightWithoutFirst] = this.splitAtIndex(topRightRow, 1);
       let combinedRow = [...topLeftRow, ...topRightWithoutFirst];
     
+      //replace character on far right, with left most lower chracter
+      //can't be top row because there is no left most character above it!
       if (rowIndex !== 0 && columnIndex === 0 && rowIndex === verticalCursorPosition / 10) {
         grid[rowIndex - 1][WIDTH - 1] = grid[rowIndex][0];
       }
     
       grid[rowIndex] = combinedRow;
       CursorMovements.cursorLeft();
-    
+     
       this.removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex + 1, columnIndex, grid);
     
       return grid;
     }
 
-  //////////end
-
-
-  /////////////start
-
-    // Helper function to split a row at a specific index
-    //@
+  
   splitAtIndex(row, index) {
   return [row.slice(0, index), row.slice(index)];
 }
@@ -459,10 +463,14 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     return grid;
   }
 
+
   let bottomRow = []
-  // Handle the case when we're at the second-to-last row (this will move the character to the right most position of the top row)
-  if (rowIndex > HEIGHT - 2) {
+  
+  // If this is the last row (based on total height), apply special handling
+  if (rowIndex >= HEIGHT - 1) {
     let currentRow = grid[rowIndex - 1];
+
+    //this doesn't have the last character, what this function does : puts a character from botttom left
     let nextRow = grid[rowIndex];
     
     // Remove the leftmost character from both rows
@@ -472,14 +480,9 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     // Add the character from the bottom row to the rightmost position of the top row
     grid[rowIndex - 1] = [...currentRow, ...nextRowLeftCharacter];
     
-    // Set the last character of the current row to the left character of the bottom row
-    //grid[rowIndex - 1][WIDTH - 1] = nextRowLeftCharacter[0];
-    //grid[rowIndex - 1][WIDTH - 1] = "-";
-    // Set the bottom row to the updated row, with the left character removed
     grid[rowIndex] = [...nextRowWithoutLeftChar];
     
     // Mark the new rightmost character in the bottom row as a placeholder dash
-    //grid[rowIndex][0] = "-";
     grid[HEIGHT-1][WIDTH-1] = "-";
     drawGrid(HEIGHT, WIDTH)
     
@@ -502,7 +505,10 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   const [removedBottomLeftChar, bottomRowWithoutLeftCharacter ] = this.splitAtIndex(bottomRow, 1);
   
   // Remove the rightmost character from the top row
-  const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
+  
+  
+  //const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
+  const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length - 1);
 
   // Add the removed leftmost character from the bottom row to the end of the top row
   let newTopRow = [...topRowWithoutRightCharacter, leftCharacterOfBottomRow];
@@ -510,6 +516,8 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   // Update the grid with the new top row
   grid[rowIndex - 1] = newTopRow;
   
+  // Subtract 1 because HEIGHT is a count, not a zero-based index
+  // This checks if the current row is the last one
   if(rowIndex === HEIGHT-1){
     grid[rowIndex] = [...bottomRow]
      
@@ -524,7 +532,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   return grid;
 }
 
-////////////end
+
 
 
 
@@ -538,6 +546,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
       );
     }
     
+    //replaces character with another, doesn't move other characters
     placeCharacterWithoutInsertDoThisFirst(rowIndex, colIndex, grid, character) {
       grid[rowIndex][colIndex] = character;
       return grid;
@@ -547,28 +556,33 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
       
     
       if (rowIndex > HEIGHT - 1) {
-        return grid; // Base case: Stop recursion when exceeding grid height
+        // Base case: Stop recursion when exceeding grid height
+        return grid; 
       }
     
       // Edge Case: Create a new row if bottom-right character is not a dash
       if (grid[HEIGHT - 1][WIDTH - 1] !== "-") {
-        this.createRow(grid, leftOverChar, rowIndex, colIndex);
-        //horizontalCursorPosition = 0;
-        //verticalCursorPosition += 10; // Move cursor to new row
+        this.createRow(grid, rowIndex);
+        
         drawGrid(HEIGHT, WIDTH);
       }
     
       let topRow = grid[rowIndex];
+      // Set lowerRow to the next row, or null if it doesn't exist
       let lowerRow = grid[rowIndex + 1] ?? [];
       let [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
     
       let combinedRow = [];
     
       if (fromIndex) {
+        // On the initial non-recursive call, the remainder is inserted between two sections.
+        // For subsequent calls, the pushed remainder causes it to be placed at the start of each row.
         CursorMovements.cursorRightOneSpace();
         combinedRow = [...leftTopRow, ...leftOverChar, ...rightTopRow];
+       
       } else {
         combinedRow = [...leftOverChar, ...leftTopRow, ...rightTopRow];
+        console.log("combinedrow: ", combinedRow)
         
       }
     
@@ -578,20 +592,11 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
       grid[rowIndex] = finishedRow;
     
       // Recursive Call to Next Row with Remainder
-      if (remainder.length > 0) {
+      
         this.initialInsertDoThisFirst(rowIndex + 1, 0, grid, remainder, false);
         return grid
-      }
+     
     
-      // Prevent cursor from going beyond grid boundaries
-      horizontalCursorPosition = Math.min(horizontalCursorPosition, WIDTH * 5 - 5);
-    
-      drawCursor(
-        horizontalCursorPosition + HOFFSET,
-        verticalCursorPosition + VOFFSET
-      );
-    
-      return grid;
     }
   }
   
