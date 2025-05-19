@@ -377,20 +377,20 @@ splitAtIndex(arr, index) {
       return grid;
     }
     
-    //for deleting 
+    //for deleting and than pull
     handleLastRow(rowIndex, columnIndex, grid) {
       let topRow = grid[rowIndex];
       let combine = [];
       //is the column index not on the first character
       if (columnIndex !== 0) {
-        //!return [arr.slice(0, index), arr.slice(index)];
-        //returns string from zero to index - exclusive
-        //also returns another strin from index until emd
+        
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
-        let [leftCharacterRightRow, topRowRightWithoutFirst] = this.splitAtIndex(topRowRight, 1);
-        combine = [...topRowLeft, ...topRowRightWithoutFirst];
+        let [leftCharacterRightRow, topRowRightWithoutFirstCharacter] = this.splitAtIndex(topRowRight, 1);
+        
+        //missing first character in top row is combine - deleted character
+        combine = [...topRowLeft, ...topRowRightWithoutFirstCharacter];
       } else {
-        //the cursor is on the left most space, when that is deleted
+        //  uptocharacter 
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
         let [leftChrRemoved, rightAfterFirst] = this.splitAtIndex(topRowRight, 1);
         combine = [...rightAfterFirst];
@@ -410,31 +410,38 @@ splitAtIndex(arr, index) {
     /////////////LEFT OFF HERE
     
 
-
+    //called by deleteandpull, setup before putting pullig up character
     handleOtherRows(rowIndex, columnIndex, grid) {
       let topRow = grid[rowIndex];
       let bottomRow = grid[rowIndex + 1];
       let topLeftRow, topRightRow;
       // deletes the character on the top right, so this will be handled below
       if (columnIndex === 0) {
+        //!
+
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
       } else {
         //slice
+        //top row is length : columindex - 1
+        //bottom row length is : row - (columnindex - 1)
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex - 1);
       }
     
-      let [leftDiscarded, topRightWithoutFirst] = this.splitAtIndex(topRightRow, 1);
-      let combinedRow = [...topLeftRow, ...topRightWithoutFirst];
+      let [leftCharacterTopRowDiscarded, topRightWithoutFirstCharacter] = this.splitAtIndex(topRightRow, 1);
+      let combinedRow = [...topLeftRow, ...topRightWithoutFirstCharacter];
     
+      //combined row combines allcharacters, but last  one
       //replace character on far right, with left most lower chracter
-      //can't be top row because there is no left most character above it!
-      if (rowIndex !== 0 && columnIndex === 0 && rowIndex === verticalCursorPosition / 10) {
+      
+
+      if (rowIndex !== 0 && rowIndex === verticalCursorPosition / 10) {
         grid[rowIndex - 1][WIDTH - 1] = grid[rowIndex][0];
       }
     
+      //the current row is created without the last character 
       grid[rowIndex] = combinedRow;
       CursorMovements.cursorLeft();
-     
+      
       this.removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex + 1, columnIndex, grid);
     
       return grid;
@@ -457,30 +464,37 @@ shiftLeftmostCharacter(fromRow, toRow) {
 }
 
 // Main function to handle the logic of moving characters between rows
+//!
 removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnIndex, grid) {
   // Bail out if the row index is out of bounds
-  if (rowIndex > HEIGHT - 1) {
-    return grid;
-  }
-
+  // if (rowIndex > HEIGHT - 1) {
+  //   return grid;
+  // }
 
   let bottomRow = []
   
   // If this is the last row (based on total height), apply special handling
-  if (rowIndex >= HEIGHT - 1) {
+  if (rowIndex > HEIGHT - 2) {
     let currentRow = grid[rowIndex - 1];
 
     //this doesn't have the last character, what this function does : puts a character from botttom left
     let nextRow = grid[rowIndex];
     
     // Remove the leftmost character from both rows
+    //top row
     let [currentRowLeftCharacter, currentRowWithoutLeftChar] = this.splitAtIndex(currentRow,1);
+    //bottom row
     let [nextRowLeftCharacter, nextRowWithoutLeftChar] = this.splitAtIndex(nextRow, 1);
     
     // Add the character from the bottom row to the rightmost position of the top row
+    //top
     grid[rowIndex - 1] = [...currentRow, ...nextRowLeftCharacter];
     
+    //botom
     grid[rowIndex] = [...nextRowWithoutLeftChar];
+
+
+
     
     // Mark the new rightmost character in the bottom row as a placeholder dash
     grid[HEIGHT-1][WIDTH-1] = "-";
@@ -489,17 +503,25 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     return grid;
   }
 
+
+
+
   // For rows that are not the last row
+  // MISSING LAST CHARACTER CHANGED IN DELETE
   let topRow = grid[rowIndex - 1];
   bottomRow = grid[rowIndex];
   
   // Get the leftmost character from the bottom row (this will be added to the rightmost side of the top row)
   let leftCharacterOfBottomRow = bottomRow[0];
-  
+  grid[rowIndex-1][WIDTH-1] = leftCharacterOfBottomRow
+
   // If we're on the bottom-most row, replace with a dash
   if (rowIndex === HEIGHT - 1) {
     leftCharacterOfBottomRow = "-";
   }
+
+
+
 
   // Remove the leftmost character from the bottom row
   const [removedBottomLeftChar, bottomRowWithoutLeftCharacter ] = this.splitAtIndex(bottomRow, 1);
@@ -513,8 +535,11 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   // Add the removed leftmost character from the bottom row to the end of the top row
   let newTopRow = [...topRowWithoutRightCharacter, leftCharacterOfBottomRow];
   
-  // Update the grid with the new top row
+  // Update the grid with the new top row 
   grid[rowIndex - 1] = newTopRow;
+
+drawGrid(HEIGHT, WIDTH)
+  
   
   // Subtract 1 because HEIGHT is a count, not a zero-based index
   // This checks if the current row is the last one
