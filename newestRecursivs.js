@@ -473,7 +473,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   // If this is the last row (based on total height), apply special handling
   if (rowIndex > HEIGHT - 1) {
 
-    console.log("in fucntion, rowIndex ", rowIndex)
+    
     
     
     /////////////////
@@ -515,7 +515,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   
   
 
-  //const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
+  
   const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length - 1);
 
   // Add the removed leftmost character from the bottom row to the end of the top row
@@ -523,6 +523,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   
   // Update the grid with the new top row 
   grid[rowIndex - 1] = newTopRow;
+  //this will be the next toprow
   grid[rowIndex] =  bottomRowWithoutLeftCharacter;
 
   
