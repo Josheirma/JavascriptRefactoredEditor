@@ -466,32 +466,24 @@ shiftLeftmostCharacter(fromRow, toRow) {
 // Main function to handle the logic of moving characters between rows
 //!
 removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnIndex, grid) {
-  // Bail out if the row index is out of bounds
-  // if (rowIndex > HEIGHT - 1) {
-  //   return grid;
-  // }
-
+  
   let bottomRow = []
   
+  
   // If this is the last row (based on total height), apply special handling
-  if (rowIndex > HEIGHT - 2) {
-    let currentRow = grid[rowIndex - 1];
+  if (rowIndex > HEIGHT - 1) {
 
-    //this doesn't have the last character, what this function does : puts a character from botttom left
-    let nextRow = grid[rowIndex];
+    console.log("in fucntion, rowIndex ", rowIndex)
     
-    // Remove the leftmost character from both rows
+    
+    /////////////////
+    let topRow = grid[rowIndex - 1];
+
     //top row
-    let [currentRowLeftCharacter, currentRowWithoutLeftChar] = this.splitAtIndex(currentRow,1);
-    //bottom row
-    let [nextRowLeftCharacter, nextRowWithoutLeftChar] = this.splitAtIndex(nextRow, 1);
-    
-    // Add the character from the bottom row to the rightmost position of the top row
-    //top
-    grid[rowIndex - 1] = [...currentRow, ...nextRowLeftCharacter];
-    
-    //botom
-    grid[rowIndex] = [...nextRowWithoutLeftChar];
+    let [topRowLeftCharacter, topRowWithoutLeftChar] = this.splitAtIndex(topRow,1);
+   
+    //bottom
+    grid[rowIndex] = [...topRowWithoutLeftChar];
 
 
 
@@ -503,55 +495,41 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
     return grid;
   }
 
+ 
 
-
-
-  // For rows that are not the last row
-  // MISSING LAST CHARACTER CHANGED IN DELETE
   let topRow = grid[rowIndex - 1];
   bottomRow = grid[rowIndex];
+
   
   // Get the leftmost character from the bottom row (this will be added to the rightmost side of the top row)
   let leftCharacterOfBottomRow = bottomRow[0];
   grid[rowIndex-1][WIDTH-1] = leftCharacterOfBottomRow
 
-  // If we're on the bottom-most row, replace with a dash
-  if (rowIndex === HEIGHT - 1) {
-    leftCharacterOfBottomRow = "-";
-  }
 
+  drawGrid(HEIGHT, WIDTH)
 
 
 
   // Remove the leftmost character from the bottom row
   const [removedBottomLeftChar, bottomRowWithoutLeftCharacter ] = this.splitAtIndex(bottomRow, 1);
   
-  // Remove the rightmost character from the top row
   
-  
+
   //const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length);
   const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length - 1);
 
   // Add the removed leftmost character from the bottom row to the end of the top row
-  let newTopRow = [...topRowWithoutRightCharacter, leftCharacterOfBottomRow];
+  let newTopRow = [...topRowWithoutRightCharacter, ...leftCharacterOfBottomRow];
   
   // Update the grid with the new top row 
   grid[rowIndex - 1] = newTopRow;
+  grid[rowIndex] =  bottomRowWithoutLeftCharacter;
+
+  
 
 drawGrid(HEIGHT, WIDTH)
   
-  
-  // Subtract 1 because HEIGHT is a count, not a zero-based index
-  // This checks if the current row is the last one
-  if(rowIndex === HEIGHT-1){
-    grid[rowIndex] = [...bottomRow]
-     
-  }
-  else{
-    // Update the grid with the updated bottom row
-    grid[rowIndex] = [...bottomRowWithoutLeftCharacter];
-  }
-  // Recursively call the function to handle the next row
+// Recursively call the function to handle the next row
   this.removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex + 1, columnIndex, grid);
 
   return grid;
