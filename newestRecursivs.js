@@ -419,26 +419,37 @@ splitAtIndex(arr, index) {
       if (columnIndex === 0) {
         //!
 
-        [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
+        //[topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
+        //topright stays as entire row
       } else {
         //slice
         //top row is length : columindex - 1
         //bottom row length is : row - (columnindex - 1)
+
+        //top left is one less than : columnidex - 1. say if 4 than 3
+        //the value stays on the  lefthand side of the right hand word
+        //! - full roww
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex - 1);
       }
     
+      //remove the inserted character from toprightrow
       let [leftCharacterTopRowDiscarded, topRightWithoutFirstCharacter] = this.splitAtIndex(topRightRow, 1);
+      
+      //this variable is the string without the deleted charcter
+      //ready for :  removeleft...
       let combinedRow = [...topLeftRow, ...topRightWithoutFirstCharacter];
     
+
+
       //combined row combines allcharacters, but last  one
       //replace character on far right, with left most lower chracter
-      
-
+      //! - what if fowindex = 0
+      //adds a character from bottom left to end of grid
       if (rowIndex !== 0 && rowIndex === verticalCursorPosition / 10) {
         grid[rowIndex - 1][WIDTH - 1] = grid[rowIndex][0];
       }
     
-      //the current row is created without the last character 
+      //the current row is created without the last character - which was placed, above. 
       grid[rowIndex] = combinedRow;
       CursorMovements.cursorLeft();
       
@@ -446,6 +457,7 @@ splitAtIndex(arr, index) {
     
       return grid;
     }
+
 
   
   splitAtIndex(row, index) {
@@ -464,9 +476,9 @@ shiftLeftmostCharacter(fromRow, toRow) {
 }
 
 // Main function to handle the logic of moving characters between rows
-//!
 removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnIndex, grid) {
   
+  //even on start, the leftmost chracter is not available and needs to be replaced (bottom row)
   let bottomRow = []
   
   
@@ -503,6 +515,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   
   // Get the leftmost character from the bottom row (this will be added to the rightmost side of the top row)
   let leftCharacterOfBottomRow = bottomRow[0];
+  //isnt on bottom row, and bottom left row is added to end of row above
   grid[rowIndex-1][WIDTH-1] = leftCharacterOfBottomRow
 
 
@@ -515,7 +528,7 @@ removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnInde
   
   
 
-  
+  //remove the right most character
   const [topRowWithoutRightCharacter, removedTopRightChar] = this.splitAtIndex(topRow, topRow.length - 1);
 
   // Add the removed leftmost character from the bottom row to the end of the top row
@@ -565,6 +578,7 @@ drawGrid(HEIGHT, WIDTH)
       }
     
       // Edge Case: Create a new row if bottom-right character is not a dash
+      // (text is pushed)
       if (grid[HEIGHT - 1][WIDTH - 1] !== "-") {
         this.createRow(grid, rowIndex);
         
@@ -578,13 +592,17 @@ drawGrid(HEIGHT, WIDTH)
     
       let combinedRow = [];
     
+      //this is the first call, recursivly
       if (fromIndex) {
         // On the initial non-recursive call, the remainder is inserted between two sections.
         // For subsequent calls, the pushed remainder causes it to be placed at the start of each row.
         CursorMovements.cursorRightOneSpace();
+        //on first call, insert the first character and there will be one character extra
         combinedRow = [...leftTopRow, ...leftOverChar, ...rightTopRow];
        
       } else {
+
+        //because left over character is next (above) put in front which will also have extra character
         combinedRow = [...leftOverChar, ...leftTopRow, ...rightTopRow];
         console.log("combinedrow: ", combinedRow)
         
@@ -595,7 +613,7 @@ drawGrid(HEIGHT, WIDTH)
       // Update grid with the finished row
       grid[rowIndex] = finishedRow;
     
-      // Recursive Call to Next Row with Remainder
+      // Recursive Call to Next Row with Remainder because of addition to row with an extra character causes a remainder
       
         this.initialInsertDoThisFirst(rowIndex + 1, 0, grid, remainder, false);
         return grid
