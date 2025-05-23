@@ -88,7 +88,7 @@ Javascript Text Editor
   let gridArray = [
     
     ["1", "2", "A", "A", "A", "A" , "A", "A", "A", "A", "A", "A", "A" , "A", "A", "A", "1", "A", "A", "A" , "A","A", "A", "A", "A", "A", "1", "2" ],
-    ["A", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "2", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
+    ["X", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "2", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     ["1", "2", "3", DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
      
@@ -104,7 +104,7 @@ Javascript Text Editor
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "D" ],
          
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "Y" ],
-    ["B", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "Z" ],
+    ["B", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "2" ],
     ["A", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "B", "C" ],
           ];
     /* template array for copy and paste testing
@@ -231,6 +231,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
     // Exit the function early if the grid is invalid
 
+    //#
     if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
         console.log("bad array");
         return; 
@@ -431,22 +432,27 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         }
     }
 
+    let WasJustaCursorMoveFlag = false;
     // Handle cursor movement based on arrow keys
     // Right arrow
     if (keyState[39]) {  
         CursorMovements.cursorRight();
+        WasJustaCursorMoveFlag = true;
     }
     // Left arrow
     else if (keyState[37]) {  
         CursorMovements.cursorLeft();
+         WasJustaCursorMoveFlag = true;
     }
     // Up arrow
     else if (keyState[38]) {  
         CursorMovements.cursorUp();
+         WasJustaCursorMoveFlag = true;
     }
      // Down arrow
     else if (keyState[40]) { 
         CursorMovements.cursorDown();
+         WasJustaCursorMoveFlag = true;
     }
 
     // Handle functions for non-cursor movement keys
@@ -472,14 +478,16 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         }
     }
 
-    
+     if (WasJustaCursorMoveFlag === false){
     //null - remainder
     //1 - index
      // true - is first time function has been called, this round
     gridArray = Recursive.pushWordsDoThisSecond(gridArray, null, 1, true);
+    }
 
     // Redraw the grid and update the cursor display after any changes
     Recursive.displayGridAndCursor();
+  
 }
     
     //cursorAndFunctionCalls(event)
