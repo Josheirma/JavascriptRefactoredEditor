@@ -231,11 +231,11 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
     // Exit the function early if the grid is invalid
 
-    //!
-    // if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
-    //     console.log("bad array");
-    //     return; 
-    // }
+    //#
+    if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
+        console.log("bad array");
+        return; 
+    }
 
     
     // All values are doubled due to the scaling below:

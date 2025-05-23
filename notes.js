@@ -44,7 +44,5 @@ insertButton.innerHTML = insertOn ? "Insert" : "On Top";
 //push, with no dashes or spaces, check for dashes when move word down
 //check move word down that dashes always worke
 
-
-//replaceWithDashesOnTopRight  =  replaceDashesWithOldWord
-
-//replaceWithDashesInTopRow  = replaceTopRowOnlyWithDashes
+splitAtIndex(row, index) {
+  return [row.slice(0, index), row.slice(index)];

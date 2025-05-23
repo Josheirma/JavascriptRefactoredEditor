@@ -278,20 +278,21 @@ splitAtIndex(arr, index) {
      
     
       // Ensure cursor stays within grid boundaries
-      //!
-      verticalCursorPosition = Math.min(verticalCursorPosition, (HEIGHT - 1) * 10);
+      //#
+      //verticalCursorPosition = Math.min(verticalCursorPosition, (HEIGHT - 1) * 10);
     
       // Draw the cursor at the new position
       drawCursor(horizontalCursorPosition + HOFFSET, verticalCursorPosition + VOFFSET);
     
       // Stop recursion if no remainder is left (after devidenextrowsasneeded recursion)
-      //!
-      if (remainder.length === 0) {
-        return grid;
-      }
+      //#
+      //if (remainder.length === 0) {
+      //this is at end, so remainder is length of zero  
+      return grid;
+      //}
     
       // Recursive call if content still remains
-      return this.pressedEnter(grid, rowIndex + 1, colIndex, remainder, false, counter + 1);
+      //return this.pressedEnter(grid, rowIndex + 1, colIndex, remainder, false, counter + 1);
     }
 
     //checks to see if in a word against right hand margin
@@ -416,11 +417,19 @@ splitAtIndex(arr, index) {
       let bottomRow = grid[rowIndex + 1];
       let topLeftRow, topRightRow;
       // deletes the character on the top right, so this will be handled below
+      
+      
+      
+      
+      
+      
+      
+      
+      //#
       if (columnIndex === 0) {
-        //!
-
-        //[topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
-        //topright stays as entire row
+        //#
+        //toprightrow is entire row!  In a moment, remove the deleted character
+        [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
       } else {
         //slice
         //top row is length : columindex - 1
@@ -428,26 +437,34 @@ splitAtIndex(arr, index) {
 
         //top left is one less than : columnidex - 1. say if 4 than 3
         //the value stays on the  lefthand side of the right hand word
-        //! - full roww
+        // Split, with character on toprightrow 
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex - 1);
       }
     
+      
+      
+      
+      
+      
+      
+      
       //remove the inserted character from toprightrow
       let [leftCharacterTopRowDiscarded, topRightWithoutFirstCharacter] = this.splitAtIndex(topRightRow, 1);
       
       //this variable is the string without the deleted charcter
       //ready for :  removeleft...
+      //could be an entire row
       let combinedRow = [...topLeftRow, ...topRightWithoutFirstCharacter];
     
 
 
       //combined row combines allcharacters, but last  one
       //replace character on far right, with left most lower chracter
-      //! - what if fowindex = 0
-      //adds a character from bottom left to end of grid
-      if (rowIndex !== 0 && rowIndex === verticalCursorPosition / 10) {
-        grid[rowIndex - 1][WIDTH - 1] = grid[rowIndex][0];
-      }
+      //# - what if fowindex = 0
+      //adds a character from bottom left to end of grid - not on first row
+      //if (rowIndex !== 0 && rowIndex === verticalCursorPosition / 10) {
+      //grid[rowIndex - 1][WIDTH - 1] = grid[rowIndex][0];
+      //}
     
       //the current row is created without the last character - which was placed, above. 
       grid[rowIndex] = combinedRow;
