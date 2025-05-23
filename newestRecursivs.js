@@ -253,8 +253,8 @@ splitAtIndex(arr, index) {
       // Reset horizontal cursor position - adjust cursor
       horizontalCursorPosition = 0;
 
-      //#
-      //if there are characters next to top right row without dashes, set flag - space?
+      //##
+      //if there are characters next to top right row without dashes, set flag - space?  if is set flag to put cursor on second column
       IsConnectedFlag = this.checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag);
 
       // Only call divideNextRowsAsNeeded if there is a valid remainder or if it's the first-time press
@@ -436,7 +436,7 @@ splitAtIndex(arr, index) {
   return [row.slice(0, index), row.slice(index)];
 }
 
-//returns to arrays
+//returns two arrays
 removeLeftmostCharacter(row) {
   return this.splitAtIndex(row, 1);
 }
