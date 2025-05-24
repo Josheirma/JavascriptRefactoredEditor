@@ -1,3 +1,5 @@
+//  //@ - recent change
+//  //& - needs remedy
 class RecursiveClass {
     constructor() {
       this.lastRowIndexToPushOn = -1;
@@ -102,7 +104,9 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   //ready to be checked for overlap again.  Is enough space is below this block.
   //handels no length too.
   //@
-  if (grid[rowIndex][0] === "-") {
+  
+  //If no spaces at all, or there is no word below against left bottom border
+ if (remainingNullSpaces === 0 || grid[rowIndex][0] === "-") {
     return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
   }
 
@@ -112,7 +116,7 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
   
   if (lengthOfRightWordAtRowOne <= remainingNullSpaces && lengthOfRightWordAtRowOne != 0) {
 
-    
+  
     
 
     //there needs to be a word on left, so that the wrap will work.
@@ -155,7 +159,7 @@ findLeftmostSpaceOrDash(row) {
 
 
 //checking for space after word to move into from top left
-//(count nulls after lengthoffirsteordbottomrow) 
+//& //(count nulls after lengthoffirsteordbottomrow) 
 countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   // Prevent out-of-bounds access
   if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0; 
@@ -262,16 +266,9 @@ splitAtIndex(arr, index) {
       // Reset horizontal cursor position - adjust cursor
       horizontalCursorPosition = 0;
 
-      //@ - removed this code in multiple areas
-      //if there are characters next to top right row without dashes, set flag - space?  if is set flag to put cursor on second column
-      //IsConnectedFlag = this.checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag);
-
-      // Only call divideNextRowsAsNeeded if there is a valid remainder or if it's the first-time press
-      //@
-      //if (remainder.length > 0 || IsFirstTime) {
-        // Merges rows into new entries whenever the Enter key is pressed
+       // On Enter key press, split the current row and insert the remaining content into a new row below
         this.divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder.length > 0 ? remainder : [""]);
-      //}
+      
     
       
          horizontalCursorPosition = 0;
