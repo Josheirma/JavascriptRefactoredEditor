@@ -141,19 +141,23 @@ Javascript Text Editor
   
 
     //Canvas and Grid constants
-    //Moves grid around
+    //changes height and width for cursor
     const VOFFSET = 32;
     const HOFFSET = 32;
     //other values for tuning cursor:
-    const FINETUNEDCURSORXONGRID = -8
-    const FINETUNEDCURSORYONGRID = -1
-    //between outer canvas and grid
-    const GRIDOFFSETX =24;
-    const GRIDOFFSETY = 31;
+    const FINETUNEDCURSORXONGRID = 1
+    const FINETUNEDCURSORYONGRID = 0
+    //moves grid around
+    const GRIDOFFSETX = 33;
+    const GRIDOFFSETY = 32;
     
     //a single step amount of pixels
     const HORIZONTALSTEP = 5;
     const VERTICALSTEP = 10;
+    
+    //Changes height and width of canvas (use gridoffset constant to move grid)
+    const CANVASHEIGHTOFFSET = 48
+    const CANVASWIDTHOFFSET = 64
 
 
 
@@ -193,12 +197,9 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     canvas.style.width = `${horizontalSize}px`;
     canvas.style.height = `${verticalSize}px`;
 
-    // For crisper imaging on high DPI screens
-    //const scale = window.devicePixelRatio;
-    //const scale = 1
     
-    const scale = window.devicePixelRatio || 1;
-    
+    //const scale = window.devicePixelRatio || 1;
+    let scale = 2
     
 
     //starts with a canvas with verticalsize: 190, and horizontalsize: 200 and scales it up to make bigger
@@ -239,7 +240,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     // All values are doubled due to the scaling below:
     //See Canvas and Grid constants for constant settings
     //predoubling (setting, ahead)
-    makeCanvas(VOFFSET*4 + HEIGHT*20, HOFFSET*4 + WIDTH*10)
+    makeCanvas(HEIGHT*10 + CANVASHEIGHTOFFSET, WIDTH*5 + CANVASWIDTHOFFSET)
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
     // Reset any previous transform
