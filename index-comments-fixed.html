@@ -1,0 +1,221 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JS Editor</title>
+</head>
+<body>
+<script src="cursorMovements.js"></script>
+<script src="newestRecursivs.js"></script>
+<link rel="stylesheet" href="styles.css">
+
+<script>
+  // Global class instances, initialized after DOM is loaded
+  let CursorMovements = null;
+  let Recursive = null;
+
+  // References to control buttons
+  let inserting;
+  let dashing;
+
+  // Initialize classes and attach event listeners once DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    CursorMovements = new CursorMovementsClass();
+    Recursive = new RecursiveClass();
+    inserting = document.getElementById('insert');
+    dashing = document.getElementById('areDashes');
+
+    // Attach event listener to Insert button if it exists
+    if (inserting) {
+      inserting.addEventListener('pointerdown', handleInsertButtonClick);
+    } else {
+      console.error("Insert button not found");
+    }
+
+    // Attach event listener to Dash toggle button if it exists
+    if (dashing) {
+      dashing.addEventListener('pointerdown', handleDashesButtonClick);
+    } else {
+      console.error("Dashes button not found");
+    }
+  });
+
+  // Dash character used for visual spacing
+  let DASH = '-';
+
+  // Flag that determines whether to display dashes or spaces
+  let areDashes = true;
+</script>
+
+<!-- Main container for the editor UI -->
+<div class="entireContainer">
+  <div class="title">
+    Javascript Text Editor
+  </div>
+
+  <!-- Canvas area for drawing the grid and cursor -->
+  <div class="canvas">
+    <canvas id="canvas_id" width="400" height="400" style="border: 1px solid #550233;"></canvas>
+  </div>
+
+  <!-- Coordinates display for current cursor position -->
+  <div class="containsXAndY">
+    <div id="xAndY">Horizontal: 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertical: 0</div>
+  </div>
+
+  <!-- Control buttons container -->
+  <div class="buttonContainer">
+    <!-- Button to toggle insert mode -->
+    <button class="insertButton" id="insert">
+      Insert
+    </button>
+
+    <!-- Button to toggle dash display on/off -->
+    <button class="dashesButton" id="areDashes">
+      Show Without Dashes
+    </button>
+  </div>
+</div>
+
+<script>
+  // Tracks the cursor's position within the grid
+  let horizontalCursorPosition = 0;
+  let verticalCursorPosition = 0;
+
+  // 2D grid array representing characters on the canvas
+  let gridArray = [
+    ["1", "2", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "1", "A", "A", "A", "A", "A", "A", "A", "A", "A", "1", "2"],
+    ["X", DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, "2", DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH],
+    // ...
+    ["A", DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, "B", "C"]
+  ];
+
+  // Grid dimensions
+  const WIDTH = 28;
+  let HEIGHT = 15;
+  const ORIGINALHEIGHT = 15;
+  let lastHeight = HEIGHT;
+
+  // Canvas/grid positioning constants
+  const VOFFSET = 32;
+  const HOFFSET = 32;
+  const FINETUNEDCURSORXONGRID = -8;
+  const FINETUNEDCURSORYONGRID = -1;
+  const GRIDOFFSETX = 24;
+  const GRIDOFFSETY = 31;
+  const HORIZONTALSTEP = 5;
+  const VERTICALSTEP = 10;
+
+  // Stores a copy of the original grid when toggling between dashes and spaces
+  let copy2DimArray = [];
+
+  // Get canvas and context
+  const canvas = document.getElementById('canvas_id');
+  if (!canvas) {
+    console.error("Canvas element with ID 'canvas_id' not found.");
+  }
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    console.error("Failed to get 2D context from canvas.");
+  }
+
+  // Insert mode flag
+  let insertOn = true;
+
+  // Sets up canvas dimensions and styles
+  function makeCanvas(verticalSize = 190, horizontalSize = 200) {
+    canvas.style.width = `${horizontalSize}px`;
+    canvas.style.height = `${verticalSize}px`;
+
+    const scale = window.devicePixelRatio || 1;
+
+    canvas.width = horizontalSize * scale;
+    canvas.height = verticalSize * scale;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(scale, scale);
+    ctx.font = '10px Monospace';
+    ctx.textAlign = 'center';
+  }
+
+  // Draws the grid contents on the canvas
+  function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
+    if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
+      console.log("Invalid grid array");
+      return;
+    }
+
+    makeCanvas(VOFFSET * 4 + HEIGHT * 20, HOFFSET * 4 + WIDTH * 10);
+
+    ctx.fillStyle = 'black';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(2, 2);
+
+    for (let i = 0; i < iValue; i++) {
+      for (let j = 0; j < jValue; j++) {
+        let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : "";
+        let xPos = j * HORIZONTALSTEP + GRIDOFFSETX;
+        let yPos = i * VERTICALSTEP + GRIDOFFSETY;
+        ctx.fillText(cellText, xPos, yPos);
+      }
+    }
+  }
+
+  // Draws a red underscore at the cursor's current location
+  function drawCursor(x, y) {
+    ctx.font = '10px Monospace';
+    ctx.fillStyle = 'red';
+    ctx.fillText('_', x + FINETUNEDCURSORXONGRID, y + FINETUNEDCURSORYONGRID);
+  }
+
+  // Holds currently pressed key
+  let gKey = '';
+  // Key state map
+  let keyState = {};
+  let down = false;
+
+  // Toggles insert mode and updates button label
+  function handleInsertButtonClick() {
+    insertOn = !insertOn;
+    const insertButton = document.getElementById("insert");
+
+    if (!insertButton) {
+      console.error("Insert button element not found");
+      return;
+    }
+
+    insertButton.innerHTML = insertOn ? "Insert" : "On Top";
+  }
+
+  // Toggles between displaying dashes and spaces on the grid
+  function handleDashesButtonClick() {
+    if (areDashes) {
+      DASH = " ";
+    } else {
+      DASH = "-";
+    }
+
+    if (areDashes) {
+      // Save current grid state
+      copy2DimArray = gridArray.map(arr => [...arr]);
+
+      // Replace dashes with spaces
+      for (let i = 0; i < HEIGHT; i++) {
+        for (let j = 0; j < WIDTH; j++) {
+          if (gridArray[i][j] === "-") {
+            gridArray[i][j] = " ";
+          }
+        }
+      }
+
+      areDashes = !areDashes;
+    } else {
+      // Restore saved dash grid
+      gridArray = copy2DimArray.map(arr => [...arr]);
+      areDashes = !areDashes;
+    }
+  }
+</script>
+</body>
+</html>
