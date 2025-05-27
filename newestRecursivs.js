@@ -126,7 +126,12 @@ pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     let combinedLowerRow = [...wordAtEndOfRowOne , ...firstWordBottomRow, ...restOfBottomRowWithoutLeftWord]
     
     
-    
+    // Insert has already been incremented by 5 horizontally.
+    // This moves the cursor (and any remaining text) to the end of the newly inserted string at the bottom left.
+    if (verticalCursorPosition/10 === rowIndex){
+    horizontalCursorPosition = totalLeftSidePhraseLength*5;
+    }
+
     grid[rowIndex] = combinedLowerRow;
     
     this.replaceTopRowOnlyWithDashes(grid, rowIndex, lengthOfRightWordAtRowOne);
