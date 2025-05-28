@@ -270,7 +270,8 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 }
 
 
-  //HOFFSET and VOFFEST (these are graphical offsets) are passed in with any additional x and y - uses:  verticalCursorPosition,  horizontalCursorPosition
+  // HOFFSET and VOFFSET represent graphical offsets and are applied along with any additional x and y values.
+  // These offsets are used to calculate the verticalCursorPosition and horizontalCursorPosition.
   function drawCursor(x,y){
     
     ctx.font = '10px Monospace'
@@ -350,8 +351,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         document.getElementById("areDashes").innerHTML = "Continue Coding";  // When showing spaces
     }
 
-    // Redraw the grid based on the current display mode (dashes or spaces)
-    //drawGrid(HEIGHT, WIDTH);
+    
 
         Recursive.displayGridAndCursor();
     
@@ -459,10 +459,12 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         gridArray = Recursive.deleteAndPullCharacters(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray);
     }
     else if (gKey == "Enter") {
-        // If Enter is pressed, perform the action associated with Enter (e.g., adding a newline)
-        //parameters:
-        //    "":  remainder (empty)
-        //    true:  - is first time function has been called, this round
+        // If Enter is pressed, perform the associated action (e.g., inserting a newline).
+        // 
+        // Parameters:
+        //   remainder (string):   The remaining text after the cursor. Pass an empty string ("") if none.
+        //   isFirstTime (boolean): Indicates whether this is the first time the function is called in the current round. Pass `true` on first invocation.
+        //   event (object):        The keyboard event object associated with the Enter key press.
         gridArray = Recursive.pressedEnter(gridArray, verticalCursorPosition / 10, horizontalCursorPosition / 5, "", true, HEIGHT - 1);
     }
     else if (gKey !== "") {
@@ -478,10 +480,11 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
 
      if (WasJustaCursorMoveFlag === false){
-    //parameters:
-    //null:   remainder
-    //1:  index
-    // true:   is first time function has been called, this round
+    // Parameters:
+    //   remainder (string | null): The remaining text after the cursor. Use `null` if there's no remainder.
+    //   index (number): The current index or position in the processing sequence (e.g., 1).
+    //   isFirstTime (boolean): Set to `true` if this is the first time the function is called in the current round.
+    //                          Subsequent recursive calls (if any) are made from `newestRecursive.js`.
     gridArray = Recursive.pushWordsDoThisSecond(gridArray, null, 1, true);
     }
 
