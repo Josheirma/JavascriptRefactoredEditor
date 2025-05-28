@@ -81,7 +81,7 @@ Javascript Text Editor
   //keep track of cursor location, horizontal step is 5, and vertical step is 10
   let horizontalCursorPosition = 0
   let verticalCursorPosition = 0
-  //Max rows before any create rows
+  
   
   
  
@@ -239,7 +239,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     
     // All values are doubled due to the scaling below:
     //See Canvas and Grid constants for constant settings
-    //predoubling (setting, ahead)
+   
     makeCanvas(HEIGHT*10 + CANVASHEIGHTOFFSET, WIDTH*5 + CANVASWIDTHOFFSET)
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
@@ -420,8 +420,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
     // This function handles the cursor movements and function calls based on key presses
     function cursorAndFunctionCalls(event) {
-    // Display the current cursor positions 
-    // displayCursorLocations();
+    
 
     // Check if the key pressed is in the preventKeys array, and if so, return without doing anything
     for (let i = 0; i < preventKeys.length; i++) {
@@ -461,15 +460,16 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
     else if (gKey == "Enter") {
         // If Enter is pressed, perform the action associated with Enter (e.g., adding a newline)
-        // "" - remainder (empty)
-        // true - is first time function has been called, this round
+        //parameters:
+        //    "":  remainder (empty)
+        //    true:  - is first time function has been called, this round
         gridArray = Recursive.pressedEnter(gridArray, verticalCursorPosition / 10, horizontalCursorPosition / 5, "", true, HEIGHT - 1);
     }
     else if (gKey !== "") {
         // If a character key is pressed, determine whether to insert or overwrite the character
         if (insertOn === true && gKey) {
             // Regular insert mode (moves text to insert the character)
-            // true - is first time function is calledm this round
+            // true - is first time function is called, this round
             gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey, true);
         } else {
             // Destructive insert mode (overwrites the character at the cursor)
@@ -478,9 +478,10 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
 
      if (WasJustaCursorMoveFlag === false){
-    //null - remainder
-    //1 - index
-     // true - is first time function has been called, this round
+    //parameters:
+    //null:   remainder
+    //1:  index
+    // true:   is first time function has been called, this round
     gridArray = Recursive.pushWordsDoThisSecond(gridArray, null, 1, true);
     }
 
@@ -489,7 +490,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
   
 }
     
-    //cursorAndFunctionCalls(event)
+   
     drawGrid(HEIGHT, WIDTH)
     drawCursor(HOFFSET, VOFFSET)
      </script>

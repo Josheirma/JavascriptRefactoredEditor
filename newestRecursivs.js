@@ -1,3 +1,4 @@
+//@@
 //  //@ - recent change
 //  //& - needs remedy
 class RecursiveClass {
@@ -60,7 +61,7 @@ getLastSpaceOrDash(grid, topRow) {
   const maxIndex = Math.max(lastIndexOfDash, lastIndexOfSpace, -1) === -1 ? topRow.length : Math.max(lastIndexOfDash, lastIndexOfSpace);
 
   
-  // Split at the position after the found dash or space 0 if no spaces or dashes, right side is entire row
+  // Split at the position after the found dash or space, 0 if no spaces or dashes, right side is entire row
   // this could be moved to next row 
   const [leftSide, rightSide] = this.splitAtIndex(topRow, maxIndex + 1);
 
@@ -163,8 +164,7 @@ findLeftmostSpaceOrDash(row) {
 }
 
 
-//checking for space after word to move into from top left
-//& //(count nulls after lengthoffirsteordbottomrow) 
+//@@
 countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
   // Prevent out-of-bounds access
   if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0; 
@@ -199,7 +199,7 @@ splitAtIndex(arr, index) {
       return rowIndex >= HEIGHT - 1;
     }
     
-    // Helper function to split into the bottom anf top and row
+    // Helper function to split into the bottom and top and row
     getRowsToSplit(grid, rowIndex) {
       const bottomRow = grid[rowIndex];
       const topRow = grid[rowIndex + 1];
@@ -240,9 +240,9 @@ splitAtIndex(arr, index) {
     // Helper function to reposition the cursor
     repositionCursor(rowIndex, oneRowsWorth) {
       
-      //if (rowIndex === Math.floor(verticalCursorPosition / 10)) {
+      
         horizontalCursorPosition = oneRowsWorth.length * 5 + 5;
-      //}
+      
     }
     
 
@@ -261,7 +261,7 @@ splitAtIndex(arr, index) {
     
     pressedEnter(grid, rowIndex, colIndex, remainder, IsFirstTime, counter) {
 
-      //let IsConnectedFlag = true;
+      
       // Base case: Prevent overflow if the cursor moves beyond grid height
       if (rowIndex >  HEIGHT - 1) return grid;
     
@@ -287,21 +287,7 @@ splitAtIndex(arr, index) {
       
     }
 
-    //checks to see if in a word against right hand margin
-    // checkIfInWordAgainstRightSide(colIndex, grid, rowIndex, IsConnectedFlag){
-      
-    //   for(let i = colIndex; i < WIDTH-1 ; i++){
-    //     if (grid[rowIndex][i] === "-"){
-    //       IsConnectedFlag = false;
-    //       break;
-
-    //     }
-        
-    //   }
-
-    //   return IsConnectedFlag
-    // }
-
+    
     
     /*
      On the first pass, there is no remainder, so checkIfInWordAgainstRightSide tacks from the top-right to the bottom — straightforward. At this point, the resulting string is longer than the grid's width. It is sliced at the width limit, and the overflow becomes the newRemainder string. The portion that fits — oneRowsWorth — is copied into the grid, character by character.
@@ -329,8 +315,8 @@ splitAtIndex(arr, index) {
       const [bottomLeftRow, bottomRightRow] = this.splitAtIndex(bottomRow, colIndex);
       const [leftTopRow, rightTopRow] = this.splitAtIndex(topRow, colIndex);
     
-      // Combine the rows with the remainder
-      //top right row , bottom row, remainder
+      // Combine the rows 
+      
       
       const buildNextRow = this.combineRowsWithRemainder(rightTopRow, bottomRow, remainder);
     
@@ -340,10 +326,6 @@ splitAtIndex(arr, index) {
     
       // Update the grid with the adjusted row
       this.updateGridRow(grid, rowIndex, oneRowsWorth);
-    
-      //@Reposition the cursor if needed
-      //this.repositionCursor(rowIndex, oneRowsWorth);
-      
     
       // Recursive call if there is still a remainder (there always is until last line)
       if (newRemainder.length > 0) {
@@ -379,17 +361,17 @@ splitAtIndex(arr, index) {
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex - 1);
         let [leftCharacterRightRow, topRowRightWithoutFirstCharacter] = this.splitAtIndex(topRowRight, 1);
         
-        //missing first character in top row is combine - deleted character,
+        //missing first character in top row 
         combine = [...topRowLeft, ...topRowRightWithoutFirstCharacter];
       } else {
         //cursor is on first column, so toprowrightwith... is complete row
     
         let [topRowLeft, topRowRight] = this.splitAtIndex(topRow, columnIndex);
-        //renove first character
+        //remove first character
         let [leftChrRemoved, topRowRightWithLeftCharacterRemoved] = this.splitAtIndex(topRowRight, 1);
         //dont forget to put dash on last row and column
         combine = [...topRowRightWithLeftCharacterRemoved];
-        //delete on lower left , deletes upper right hand side character
+        //delete on lower left , replaces upper right hand side character
         grid[HEIGHT - 2][WIDTH - 1] = grid[HEIGHT - 1][0];
       }
     
@@ -409,7 +391,7 @@ splitAtIndex(arr, index) {
       // deletes the character on the top right, so this will be handled below
       
       if (columnIndex === 0) {
-        //@
+        
         //toprightrow is entire row!  In a moment, remove the deleted character, in front
         [topLeftRow, topRightRow] = this.splitAtIndex(topRow, columnIndex);
       } else {
@@ -447,12 +429,6 @@ removeLeftmostCharacter(row) {
   return this.splitAtIndex(row, 1);
 }
 
-// Helper function to shift the leftmost character from one row to another
-//@
-// shiftLeftmostCharacter(fromRow, toRow) {
-//   const [leftCharacter, remainingRow] = this.removeLeftmostCharacter(fromRow);
-//   return [remainingRow, leftCharacter];
-// }
 
 // Main function to handle the logic of moving characters between rows
 removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(rowIndex, columnIndex, grid) {
