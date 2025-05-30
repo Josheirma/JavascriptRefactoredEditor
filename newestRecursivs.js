@@ -25,6 +25,7 @@ class RecursiveClass {
         const newRow = Array(WIDTH).fill("-");
         grid.push(newRow);
         HEIGHT++;
+         makeCanvas(HEIGHT*10 + CANVASHEIGHTOFFSET, WIDTH*5 + CANVASWIDTHOFFSET)
         return grid;
     }
 

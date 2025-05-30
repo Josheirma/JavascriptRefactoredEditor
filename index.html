@@ -189,11 +189,14 @@ Javascript Text Editor
 
 
 
-let scale = window.devicePixelRatio || 1.75;
+let scale = window.devicePixelRatio || 1;
 
 // Function to initialize the canvas size and appearance
 
 function makeCanvas(verticalSize = 190, horizontalSize = 200) {
+    
+  verticalSize = verticalSize * 2;
+  horizontalSize = horizontalSize * 2;
     // Set canvas display size
     canvas.style.width = `${horizontalSize}px`;
     canvas.style.height = `${verticalSize}px`;
@@ -203,7 +206,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
    
 
     //how many pixels to draw on sized canvas - set the internal pixel resolution of the canvas.
-    //works internally. 
+    //works internally.  
     canvas.width = horizontalSize * (scale)  ;
     canvas.height = verticalSize * (scale);
 
@@ -246,8 +249,9 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
-    
-
+    //reset scale
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(2,2)
     ctx.clearRect(0, 0,  canvas.width, canvas.height); // Clear all
    
 
