@@ -1,187 +1,99 @@
-
-
-body{
-    
-    margin-top: 10px;
-   min-width: 468px;
-   margin: 0rem;
-   padding: 0rem;
-   width:100%;
-   
-  
+body {
+  margin-top: 10px;
+  min-width: 468px;
+  margin: 0rem;
+  padding: 0rem;
+  width: 100%;
 }
-
-html{
-
-    font-size: 16px;
+html {
+  font-size: 16px;
 }
-
-
-
-
-.xAndY{
-
-
+.xAndY {
 }
-
-
-
-
-.canvas{
-
-    text-align: center;
-    
-    
-    display: flex;
-    justify-content:center;
-    align-content: center;
-
-    
-
+.canvas {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
 }
-.buttonContainer{
-    display:flex;
-    justify-content:center;
-    align-content: center;
-    
-    margin-top: 1rem;
-    
-    
-
-
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin-top: 1rem;
 }
-.insertButton{
-
-    width:4rem;
-    font-size: .8rem;
-    height:1.5rem;
-    margin-bottom:.5rem
-    
-
-    
+.insertButton {
+  width: 4rem;
+  font-size: 0.8rem;
+  height: 1.5rem;
+  margin-bottom: 0.5rem;
 }
-
-
-.dashesButton{
-
-    font-size: .8rem;
-    height:1.5rem;
-    width:11rem;
+.dashesButton {
+  font-size: 0.8rem;
+  height: 1.5rem;
+  width: 11rem;
 }
-
-
-
-
-.canvas{
-    /*min-width: 350 - 70px;
+.canvas {
+  /*min-width: 350 - 70px;
     min-width: 290px;
     */
 }
-.title{
-
-    font-size: 1.9rem;
-    text-align: center;
-    margin-bottom:1rem
-
+.title {
+  font-size: 1.9rem;
+  text-align: center;
+  margin-bottom: 1rem;
 }
-
-.insertButton{
-    margin-bottom:0rem;
-    margin-right: 2rem;
-
+.insertButton {
+  margin-bottom: 0rem;
+  margin-right: 2rem;
 }
-
-.entireContainer{
-    width:100%;
-    
-    margin-top: 5rem;
+.entireContainer {
+  width: 100%;
+  margin-top: 5rem;
 }
-
-.containsXANdY{
-
-    
-    display:flex;
-    justify-content:center;
-    align-content: center;
-    font-size: 1.5rem; 
-    
+.containsXANdY {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  font-size: 1.5rem;
 }
-
-.containsXAndY{
-margin-top: .5rem;
-text-align: center;
+.containsXAndY {
+  margin-top: 0.5rem;
+  text-align: center;
 }
-
-.horizontal{
-margin-right: 2rem;
-
+.horizontal {
+  margin-right: 2rem;
 }
-
-.vertical{
-
+.vertical {
 }
-
-
-@media(min-width: 350px) {
-
-    
-    .buttonContainer{
-        display:flex;
-        flex-direction:row;
-        justify-content:center;
-        align-items: center;
-    }
-    .canvas{
-    
-    }
-    
+@media (min-width: 350px) {
+  .buttonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .canvas {
+  }
 }
-
-@media(min-width: 1500px){
-
-    .buttonContainer{
-
-        margin-top: 2rem;
-        
-    }
-
-    .insertButton{
-
-        font-size: 1.6rem;
-        width:8rem;
-        height: 2.3rem;
-       
-        
-        
-    }
-
-    .dashesButton{
-
-        font-size: 1.6rem;
-        width:20rem;
-        height: 2.3rem;
-
-    }
-
+@media (min-width: 1500px) {
+  .buttonContainer {
+    margin-top: 2rem;
+  }
+  .insertButton {
+    font-size: 1.6rem;
+    width: 8rem;
+    height: 2.3rem;
+  }
+  .dashesButton {
+    font-size: 1.6rem;
+    width: 20rem;
+    height: 2.3rem;
+  }
 }
-
-
-
-
-
-@media(min-width: 500px) {
-
-    
-
-
+@media (min-width: 500px) {
 }
-
-@media(min-width: 350px) {
-
-
+@media (min-width: 350px) {
 }
-
-@media(min-width: 350px) {
-
-
+@media (min-width: 350px) {
 }

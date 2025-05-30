@@ -1,4 +1,4 @@
-  <html lang="en">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -6,503 +6,855 @@
     <title>JS Editor</title>
   </head>
   <body>
-  <script src="cursorMovements.js"></script>
-  <script src="newestRecursivs.js"></script>
-  <link rel= 'stylesheet' href='styles.css'>
-  
-  
-  <script>
-    
-    ///global classes, created in listener, below.
-    let CursorMovements = null;
-    let Recursive = null;
-    //global button references
-    let inserting;
-    let dashing;
-   
-    // Initialize the classes for cursor movement and recursion 
-  document.addEventListener("DOMContentLoaded", () => {
-  CursorMovements = new CursorMovementsClass();
-  Recursive = new RecursiveClass();
-  inserting = document.getElementById('insert')
-  dashing = document.getElementById('areDashes')
-  // Add event listener to Buttons
-  // Check if buttons exist before adding event listeners
-  if (inserting) {
-    inserting.addEventListener('pointerdown', handleInsertButtonClick);
-  } else {
-    console.error("Insert button not found");
-  }
-
-  if (dashing) {
-    dashing.addEventListener('pointerdown', handleDashesButtonClick);
-  } else {
-    console.error("Dashes button not found");
-  }
-
-  
-  });
-
-    
-    // Dash character to replace spaces for display
-    let DASH = '-';
-    // Flag to toggle dash display instead of spaces
-    let areDashes = true; 
-</script>
-
-<!-- Canvas element for rendering content -->
-<div class = "entireContainer">
-<div class = "title">
-Javascript Text Editor
-</div>
-<div class = "canvas" >
-<canvas id="canvas_id" width="400" height="400" style="border: 1px solid #550233;"></canvas>
-</div>
-<!-- Display horizontal and vertical positioning -->
-<div class = "containsXAndY">
-
-<div id="xAndY" >Horizontal: 0&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspVertical: 0  </div>
-</div>
-<!-- Container for buttons displayed in a column layout -->
-<div class = "buttonContainer">
-    <!-- Button for inserting content directly on top of the canvas -->
-    <button class = "insertButton" id="insert">
-        Insert
-    </button>
-    
-    <!-- Button to toggle between showing spaces and dashes -->
-    <button class = "dashesButton" id="areDashes">
-        Show Without Dashes
-    </button>
-</div>
-</div>
-<script>
-  
-  //keep track of cursor location, horizontal step is 5, and vertical step is 10
-  let horizontalCursorPosition = 0
-  let verticalCursorPosition = 0
-  
-  
-  
- 
-  let gridArray = [
-    
-    ["1", "2", "A", "A", "A", "A" , "A", "A", "A", "A", "A", "A", "A" , "A", "A", "A", "1", "A", "A", "A" , "A","A", "A", "A", "A", "A", "1", "2" ],
-    ["X", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, "2", DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    ["1", "2", "3", DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-     
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, "z", "y", "c", "b", "a" ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, "1", "2", "3" ],
-     
-    ["Q", "W", DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "1", "2" ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, "A", "B", "C" ],
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "D" ],
-         
-    [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "Y" ],
-    ["B", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, "2" ],
-    ["A", DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, "B", "C" ],
-          ];
-    /* template array for copy and paste testing
+    <script src="cursorMovements.js"></script>
+    <script src="newestRecursivs.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      ///global classes, created in listener, below.
+      let CursorMovements = null;
+      let Recursive = null;
+      //global button references
+      let inserting;
+      let dashing;
+      // Initialize the classes for cursor movement and recursion
+      document.addEventListener("DOMContentLoaded", () => {
+        CursorMovements = new CursorMovementsClass();
+        Recursive = new RecursiveClass();
+        inserting = document.getElementById("insert");
+        dashing = document.getElementById("areDashes");
+        // Add event listener to Buttons
+        // Check if buttons exist before adding event listeners
+        if (inserting) {
+          inserting.addEventListener("pointerdown", handleInsertButtonClick);
+        } else {
+          console.error("Insert button not found");
+        }
+        if (dashing) {
+          dashing.addEventListener("pointerdown", handleDashesButtonClick);
+        } else {
+          console.error("Dashes button not found");
+        }
+      });
+      // Dash character to replace spaces for display
+      let DASH = "-";
+      // Flag to toggle dash display instead of spaces
+      let areDashes = true;
+    </script>
+    <!-- Canvas element for rendering content -->
+    <div class="entireContainer">
+      <div class="title">Javascript Text Editor</div>
+      <div class="canvas">
+        <canvas
+          id="canvas_id"
+          width="400"
+          height="400"
+          style="border: 1px solid #550233"
+        ></canvas>
+      </div>
+      <!-- Display horizontal and vertical positioning -->
+      <div class="containsXAndY">
+        <div id="xAndY">
+          Horizontal:
+          0&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspVertical: 0
+        </div>
+      </div>
+      <!-- Container for buttons displayed in a column layout -->
+      <div class="buttonContainer">
+        <!-- Button for inserting content directly on top of the canvas -->
+        <button class="insertButton" id="insert">Insert</button>
+        <!-- Button to toggle between showing spaces and dashes -->
+        <button class="dashesButton" id="areDashes">Show Without Dashes</button>
+      </div>
+    </div>
+    <script>
+      //keep track of cursor location, horizontal step is 5, and vertical step is 10
+      let horizontalCursorPosition = 0;
+      let verticalCursorPosition = 0;
+      let gridArray = [
+        [
+          "1",
+          "2",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "1",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "A",
+          "1",
+          "2",
+        ],
+        [
+          "X",
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "2",
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+        ],
+        [
+          "1",
+          "2",
+          "3",
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "z",
+          "y",
+          "c",
+          "b",
+          "a",
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "1",
+          "2",
+          "3",
+        ],
+        [
+          "Q",
+          "W",
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "1",
+          "2",
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "A",
+          "B",
+          "C",
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "D",
+        ],
+        [
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "Y",
+        ],
+        [
+          "B",
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "2",
+        ],
+        [
+          "A",
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          DASH,
+          "B",
+          "C",
+        ],
+      ];
+      /* template array for copy and paste testing
     let gridArray = [
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-     
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-     
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
-         
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
     [DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH, DASH, DASH, DASH, DASH, DASH, DASH , DASH,DASH, DASH, DASH, DASH, DASH, DASH, DASH ],
          //["!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!", "!", "!", "!", "!", "!" , "!", "!","!", "!", "!", "!", "!" , "!" ],
     ];
     */
-  
-
-
-  // Grid dimensions
-  const WIDTH = 28;
-  let HEIGHT = 15;
-  const ORIGINALHEIGHT = 15;
-  let lastHeight = HEIGHT
-  
-
-    //Canvas and Grid constants
-    //changes height and width for cursor
-    const VOFFSET = 32;
-    const HOFFSET = 32;
-    //other values for tuning cursor:
-    const FINETUNEDCURSORXONGRID = 1
-    const FINETUNEDCURSORYONGRID = 0
-    //moves grid around
-    const GRIDOFFSETX = 33;
-    const GRIDOFFSETY = 32;
-    
-    //a single step amount of pixels
-    const HORIZONTALSTEP = 5;
-    const VERTICALSTEP = 10;
-    
-    //Changes height and width of canvas (use gridoffset constant to move grid)
-    const CANVASHEIGHTOFFSET = 48
-    const CANVASWIDTHOFFSET = 64
-
-
-
-
- 
-
-
-  
-  let copy2DimArray = [];
-
-  // Canvas and context
-  const canvas = document.getElementById('canvas_id');
-  if (!canvas) {
-    console.error("Canvas element with ID 'canvas_id' not found.");
-    
-  }
-
-  const ctx = canvas.getContext('2d');
-  if (!ctx) {
-    console.error("Failed to get 2D context from canvas.");
-    
-  }
-
-  // Initial insert mode state
-  let insertOn = true;
-  
-
-
-
-
-
-let scale = window.devicePixelRatio || 1;
-
-// Function to initialize the canvas size and appearance
-
-function makeCanvas(verticalSize = 190, horizontalSize = 200) {
-    
-  verticalSize = verticalSize * 2;
-  horizontalSize = horizontalSize * 2;
-    // Set canvas display size
-    canvas.style.width = `${horizontalSize}px`;
-    canvas.style.height = `${verticalSize}px`;
-
-    
-    
-   
-
-    //how many pixels to draw on sized canvas - set the internal pixel resolution of the canvas.
-    //works internally.  
-    canvas.width = horizontalSize * (scale)  ;
-    canvas.height = verticalSize * (scale);
-
-    // Apply initial scale for high DPI - crispness
-    // scale drawing operations
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
-    
-    // Set font and text alignment
-   
-    ctx.textAlign = 'center';
-    ctx.font = '10px Monospace'
-}
- 
-
-
-
-
-
-  
-  
-  let IsFirstRun = true;
-
-  
-  function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
-
-   
-    // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
-    // Exit the function early if the grid is invalid
-    if (!gridArray || gridArray.length < iValue || gridArray[0].length < jValue) {
-        console.log("bad array");
-        return; 
-    }
-
-    
-    if(IsFirstRun){
-    // All values are doubled due to the scaling below:
-    //See Canvas and Grid constants for constant settings
-    makeCanvas(HEIGHT*10 + CANVASHEIGHTOFFSET, WIDTH*5 + CANVASWIDTHOFFSET)
-    IsFirstRun = false;
-    }
-    // Set the fill color for the grid text (black)
-    ctx.fillStyle = 'black';
-    //reset scale
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(2,2)
-    ctx.clearRect(0, 0,  canvas.width, canvas.height); // Clear all
-   
-
-    // Loop through the grid and render each cell's text
-    for (let i = 0; i < iValue; i++) {
-        for (let j = 0; j < jValue; j++) {
+      // Grid dimensions
+      const WIDTH = 28;
+      let HEIGHT = 15;
+      const ORIGINALHEIGHT = 15;
+      let lastHeight = HEIGHT;
+      //Canvas and Grid constants
+      //changes height and width for cursor
+      const VOFFSET = 32;
+      const HOFFSET = 32;
+      //other values for tuning cursor:
+      const FINETUNEDCURSORXONGRID = 1;
+      const FINETUNEDCURSORYONGRID = 0;
+      //moves grid around
+      const GRIDOFFSETX = 33;
+      const GRIDOFFSETY = 32;
+      //a single step amount of pixels
+      const HORIZONTALSTEP = 5;
+      const VERTICALSTEP = 10;
+      //Changes height and width of canvas (use gridoffset constant to move grid)
+      const CANVASHEIGHTOFFSET = 48;
+      const CANVASWIDTHOFFSET = 64;
+      let copy2DimArray = [];
+      // Canvas and context
+      const canvas = document.getElementById("canvas_id");
+      if (!canvas) {
+        console.error("Canvas element with ID 'canvas_id' not found.");
+      }
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        console.error("Failed to get 2D context from canvas.");
+      }
+      // Initial insert mode state
+      let insertOn = true;
+      let scale = window.devicePixelRatio || 1;
+      // Function to initialize the canvas size and appearance
+      function makeCanvas(verticalSize = 190, horizontalSize = 200) {
+        verticalSize = verticalSize * 2;
+        horizontalSize = horizontalSize * 2;
+        // Set canvas display size
+        canvas.style.width = `${horizontalSize}px`;
+        canvas.style.height = `${verticalSize}px`;
+        //how many pixels to draw on sized canvas - set the internal pixel resolution of the canvas.
+        //works internally.
+        canvas.width = horizontalSize * scale;
+        canvas.height = verticalSize * scale;
+        // Apply initial scale for high DPI - crispness
+        // scale drawing operations
+        ctx.setTransform(scale, 0, 0, scale, 0, 0);
+        // Set font and text alignment
+        ctx.textAlign = "center";
+        ctx.font = "10px Monospace";
+      }
+      let IsFirstRun = true;
+      function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
+        // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
+        // Exit the function early if the grid is invalid
+        if (
+          !gridArray ||
+          gridArray.length < iValue ||
+          gridArray[0].length < jValue
+        ) {
+          console.log("bad array");
+          return;
+        }
+        if (IsFirstRun) {
+          // All values are doubled due to the scaling below:
+          //See Canvas and Grid constants for constant settings
+          makeCanvas(
+            HEIGHT * 10 + CANVASHEIGHTOFFSET,
+            WIDTH * 5 + CANVASWIDTHOFFSET
+          );
+          IsFirstRun = false;
+        }
+        // Set the fill color for the grid text (black)
+        ctx.fillStyle = "black";
+        //reset scale
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(2, 2);
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear all
+        // Loop through the grid and render each cell's text
+        for (let i = 0; i < iValue; i++) {
+          for (let j = 0; j < jValue; j++) {
             // Check if the current grid cell exists and is valid
             // Default to empty string if invalid
             // gets correct value from grid to place in the right cell
-            let cellText = (gridArray[i] && gridArray[i][j]) ? gridArray[i][j] : ""; 
-           
-            let xPos = j * HORIZONTALSTEP + GRIDOFFSETX ;  
-            
-           
+            let cellText =
+              gridArray[i] && gridArray[i][j] ? gridArray[i][j] : "";
+            let xPos = j * HORIZONTALSTEP + GRIDOFFSETX;
             let yPos = i * VERTICALSTEP + GRIDOFFSETY;
             // Render the text in the canvas at calculated positions
             ctx.fillText(cellText, xPos, yPos);
+          }
         }
-    }
-    
-
-
-
-}
-
-
-  // HOFFSET and VOFFSET represent graphical offsets and are applied along with any additional x and y values.
-  // These offsets are used to calculate the verticalCursorPosition and horizontalCursorPosition.
-  function drawCursor(x,y){
-    
-    ctx.font = '10px Monospace'
-    ctx.fillStyle = 'red'
-    //fine tuned
-    ctx.fillText('_', x+FINETUNEDCURSORXONGRID, y+FINETUNEDCURSORYONGRID)
-    }
-
-
-    //holds key pressed
-    let gKey = ''
-    //array that holds key code, (number)
-    var keyState = {}
-    let down = false
-    
-  // Function to handle Insert button click event
-  
-  function handleInsertButtonClick() {
-  // Toggle the insertOn flag
-  insertOn = !insertOn;
-
-  // Get the insert button element
-  const insertButton = document.getElementById("insert");
-
-  // Check if the button exists to avoid runtime errors
-  if (!insertButton) {
-    console.error("Insert button element not found");
-    return;
-  }
-
-  // Update button text based on the insertOn state
-  insertButton.innerHTML = insertOn ? "Insert" : "On Top";
-}
-    
-
-    // This function handles the button click to toggle between displaying dashes and spaces on the grid
-     
-    function handleDashesButtonClick() {
-    // Toggle the dash state: if showing dashes, switch to spaces, and vice versa.
-    if (areDashes) {
-        // Set DASH to space when toggling off
-        DASH = " ";  
-    } else {
-        // Set DASH to dash when toggling on
-        DASH = "-";  
-    }
-
-    // If currently displaying dashes, change grid content to spaces
-    if (areDashes) {
-        // Save a deep copy of the current grid state (with dashes) for future restoration
-        copy2DimArray = gridArray.map(arr => [...arr]);
-
-        // Loop through the grid and replace all dashes with spaces
-        for (let i = 0; i < HEIGHT; i++) {
+      }
+      // HOFFSET and VOFFSET represent graphical offsets and are applied along with any additional x and y values.
+      // These offsets are used to calculate the verticalCursorPosition and horizontalCursorPosition.
+      function drawCursor(x, y) {
+        ctx.font = "10px Monospace";
+        ctx.fillStyle = "red";
+        //fine tuned
+        ctx.fillText(
+          "_",
+          x + FINETUNEDCURSORXONGRID,
+          y + FINETUNEDCURSORYONGRID
+        );
+      }
+      //holds key pressed
+      let gKey = "";
+      //array that holds key code, (number)
+      var keyState = {};
+      let down = false;
+      // Function to handle Insert button click event
+      function handleInsertButtonClick() {
+        // Toggle the insertOn flag
+        insertOn = !insertOn;
+        // Get the insert button element
+        const insertButton = document.getElementById("insert");
+        // Check if the button exists to avoid runtime errors
+        if (!insertButton) {
+          console.error("Insert button element not found");
+          return;
+        }
+        // Update button text based on the insertOn state
+        insertButton.innerHTML = insertOn ? "Insert" : "On Top";
+      }
+      // This function handles the button click to toggle between displaying dashes and spaces on the grid
+      function handleDashesButtonClick() {
+        // Toggle the dash state: if showing dashes, switch to spaces, and vice versa.
+        if (areDashes) {
+          // Set DASH to space when toggling off
+          DASH = " ";
+        } else {
+          // Set DASH to dash when toggling on
+          DASH = "-";
+        }
+        // If currently displaying dashes, change grid content to spaces
+        if (areDashes) {
+          // Save a deep copy of the current grid state (with dashes) for future restoration
+          copy2DimArray = gridArray.map((arr) => [...arr]);
+          // Loop through the grid and replace all dashes with spaces
+          for (let i = 0; i < HEIGHT; i++) {
             for (let j = 0; j < WIDTH; j++) {
-                if (gridArray[i][j] === "-") {
-                    gridArray[i][j] = " ";  // Replace dash with space
-                }
+              if (gridArray[i][j] === "-") {
+                gridArray[i][j] = " "; // Replace dash with space
+              }
             }
+          }
+          // Toggle the areDashes flag to indicate we are now showing spaces
+          areDashes = !areDashes;
+        } else {
+          // If currently displaying spaces, restore the grid state with dashes
+          gridArray = copy2DimArray.map((arr) => [...arr]);
+          // Toggle the areDashes flag to indicate we are now showing dashes
+          areDashes = !areDashes;
         }
-
-        // Toggle the areDashes flag to indicate we are now showing spaces
-        areDashes = !areDashes;
-
-    } else {
-        // If currently displaying spaces, restore the grid state with dashes
-        gridArray = copy2DimArray.map(arr => [...arr]);
-
-        // Toggle the areDashes flag to indicate we are now showing dashes
-        areDashes = !areDashes;
-    }
-
-    // Update the button text to reflect the current display state
-    if (areDashes) {
-        document.getElementById("areDashes").innerHTML = "Show Without Dashes";  // When showing dashes
-    } else {
-        document.getElementById("areDashes").innerHTML = "Continue Coding";  // When showing spaces
-    }
-
-    
-
+        // Update the button text to reflect the current display state
+        if (areDashes) {
+          document.getElementById("areDashes").innerHTML =
+            "Show Without Dashes"; // When showing dashes
+        } else {
+          document.getElementById("areDashes").innerHTML = "Continue Coding"; // When showing spaces
+        }
         Recursive.displayGridAndCursor();
-    
-}
-
-
-    
-
-   document.body.addEventListener('keydown', function (e) {
-    // Mark the key as pressed based on its keyCode
-    keyState[e.keyCode] = true;
-
-    // Store the key that was pressed
-    gKey = e.key;
-
-    // Prevent multiple keydown events from triggering simultaneously
-    if (down) return;
-    down = true;
-
-    // Call functions related to cursor movement and other actions
-    cursorAndFunctionCalls();
-    displayCursorLocations();
-
-    // The event is simply captured and handled here
-    }, false);
-
-    document.addEventListener('keyup', function (e) {
-    // Mark the key as released based on its keyCode
-    keyState[e.keyCode] = false;
-
-    // Store the key that was released
-    gKey = e.key;
-
-    // Reset the down flag as the key is no longer pressed
-    down = false;
-
-    // Simply captures the event
-    }, false);
-     
-    //these keys dont do anything
-    const preventKeys = [
-    'Tab', 'PageUp', 'PageDown', 'Home', 'End','Control', 'Alt', 'Meta', 'Shift', 'Escape'
-    ];
-    
-    // This function updates the display of the cursor's current horizontal and vertical positions
-    
-    function displayCursorLocations() {
-    // Get the DOM element where the cursor positions will be displayed
-    let cursorDisplayElement = document.getElementById("xAndY");
-
-    // The cursor's horizontal and vertical positions (scaled by 5 and 10, respectively)
-    // Horizontal position scaled by 5
-    let horizontalPosition = horizontalCursorPosition / 5;  
-    // Vertical position scaled by 10
-    let verticalPosition = verticalCursorPosition / 10;    
-    // Update the inner HTML of the element to display the current cursor positions
-
-
-
-
-    cursorDisplayElement.innerHTML = 
-        'Horizontal: ' + horizontalPosition + ' &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ' + 
-        'Vertical: ' + verticalPosition;
-}
-
-
-    // This function handles the cursor movements and function calls based on key presses
-    function cursorAndFunctionCalls(event) {
-    
-
-    // Check if the key pressed is in the preventKeys array, and if so, return without doing anything
-    for (let i = 0; i < preventKeys.length; i++) {
-        if (preventKeys[i] == gKey) {
+      }
+      document.body.addEventListener(
+        "keydown",
+        function (e) {
+          // Mark the key as pressed based on its keyCode
+          keyState[e.keyCode] = true;
+          // Store the key that was pressed
+          gKey = e.key;
+          // Prevent multiple keydown events from triggering simultaneously
+          if (down) return;
+          down = true;
+          // Call functions related to cursor movement and other actions
+          cursorAndFunctionCalls();
+          displayCursorLocations();
+          // The event is simply captured and handled here
+        },
+        false
+      );
+      document.addEventListener(
+        "keyup",
+        function (e) {
+          // Mark the key as released based on its keyCode
+          keyState[e.keyCode] = false;
+          // Store the key that was released
+          gKey = e.key;
+          // Reset the down flag as the key is no longer pressed
+          down = false;
+          // Simply captures the event
+        },
+        false
+      );
+      //these keys dont do anything
+      const preventKeys = [
+        "Tab",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        "Control",
+        "Alt",
+        "Meta",
+        "Shift",
+        "Escape",
+      ];
+      // This function updates the display of the cursor's current horizontal and vertical positions
+      function displayCursorLocations() {
+        // Get the DOM element where the cursor positions will be displayed
+        let cursorDisplayElement = document.getElementById("xAndY");
+        // The cursor's horizontal and vertical positions (scaled by 5 and 10, respectively)
+        // Horizontal position scaled by 5
+        let horizontalPosition = horizontalCursorPosition / 5;
+        // Vertical position scaled by 10
+        let verticalPosition = verticalCursorPosition / 10;
+        // Update the inner HTML of the element to display the current cursor positions
+        cursorDisplayElement.innerHTML =
+          "Horizontal: " +
+          horizontalPosition +
+          " &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp " +
+          "Vertical: " +
+          verticalPosition;
+      }
+      // This function handles the cursor movements and function calls based on key presses
+      function cursorAndFunctionCalls(event) {
+        // Check if the key pressed is in the preventKeys array, and if so, return without doing anything
+        for (let i = 0; i < preventKeys.length; i++) {
+          if (preventKeys[i] == gKey) {
             // Exit the function if the key is in the preventKeys list
-            return;  
+            return;
+          }
         }
-    }
-
-    let WasJustaCursorMoveFlag = false;
-    // Handle cursor movement based on arrow keys
-    // Right arrow
-    if (keyState[39]) {  
-        CursorMovements.cursorRight();
-        WasJustaCursorMoveFlag = true;
-    }
-    // Left arrow
-    else if (keyState[37]) {  
-        CursorMovements.cursorLeft();
-         WasJustaCursorMoveFlag = true;
-    }
-    // Up arrow
-    else if (keyState[38]) {  
-        CursorMovements.cursorUp();
-         WasJustaCursorMoveFlag = true;
-    }
-     // Down arrow
-    else if (keyState[40]) { 
-        CursorMovements.cursorDown();
-         WasJustaCursorMoveFlag = true;
-    }
-
-    // Handle functions for non-cursor movement keys
-    else if (gKey === 'Delete' || gKey === 'Backspace') {
-        // If Delete or Backspace is pressed, delete the character at the cursor position
-        gridArray = Recursive.deleteAndPullCharacters(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray);
-    }
-    else if (gKey == "Enter") {
-        // If Enter is pressed, perform the associated action (e.g., inserting a newline).
-        // 
-        // Parameters:
-        //   remainder (string):   The remaining text after the cursor. Pass an empty string ("") if none.
-        //   isFirstTime (boolean): Indicates whether this is the first time the function is called in the current round. Pass `true` on first invocation.
-        //   event (object):        The keyboard event object associated with the Enter key press.
-        gridArray = Recursive.pressedEnter(gridArray, verticalCursorPosition / 10, horizontalCursorPosition / 5, "", true, HEIGHT - 1);
-    }
-    else if (gKey !== "") {
-        // If a character key is pressed, determine whether to insert or overwrite the character
-        if (insertOn === true && gKey) {
+        let WasJustaCursorMoveFlag = false;
+        // Handle cursor movement based on arrow keys
+        // Right arrow
+        if (keyState[39]) {
+          CursorMovements.cursorRight();
+          WasJustaCursorMoveFlag = true;
+        }
+        // Left arrow
+        else if (keyState[37]) {
+          CursorMovements.cursorLeft();
+          WasJustaCursorMoveFlag = true;
+        }
+        // Up arrow
+        else if (keyState[38]) {
+          CursorMovements.cursorUp();
+          WasJustaCursorMoveFlag = true;
+        }
+        // Down arrow
+        else if (keyState[40]) {
+          CursorMovements.cursorDown();
+          WasJustaCursorMoveFlag = true;
+        }
+        // Handle functions for non-cursor movement keys
+        else if (gKey === "Delete" || gKey === "Backspace") {
+          // If Delete or Backspace is pressed, delete the character at the cursor position
+          gridArray = Recursive.deleteAndPullCharacters(
+            verticalCursorPosition / 10,
+            horizontalCursorPosition / 5,
+            gridArray
+          );
+        } else if (gKey == "Enter") {
+          // If Enter is pressed, perform the associated action (e.g., inserting a newline).
+          //
+          // Parameters:
+          //   remainder (string):   The remaining text after the cursor. Pass an empty string ("") if none.
+          //   isFirstTime (boolean): Indicates whether this is the first time the function is called in the current round. Pass `true` on first invocation.
+          //   event (object):        The keyboard event object associated with the Enter key press.
+          gridArray = Recursive.pressedEnter(
+            gridArray,
+            verticalCursorPosition / 10,
+            horizontalCursorPosition / 5,
+            "",
+            true,
+            HEIGHT - 1
+          );
+        } else if (gKey !== "") {
+          // If a character key is pressed, determine whether to insert or overwrite the character
+          if (insertOn === true && gKey) {
             // Regular insert mode (moves text to insert the character)
             // true - is first time function is called, this round
-            gridArray = Recursive.initialInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey, true);
-        } else {
+            gridArray = Recursive.initialInsertDoThisFirst(
+              verticalCursorPosition / 10,
+              horizontalCursorPosition / 5,
+              gridArray,
+              gKey,
+              true
+            );
+          } else {
             // Destructive insert mode (overwrites the character at the cursor)
-            gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(verticalCursorPosition / 10, horizontalCursorPosition / 5, gridArray, gKey);
+            gridArray = Recursive.placeCharacterWithoutInsertDoThisFirst(
+              verticalCursorPosition / 10,
+              horizontalCursorPosition / 5,
+              gridArray,
+              gKey
+            );
+          }
         }
-    }
-
-     if (WasJustaCursorMoveFlag === false){
-    // Parameters:
-    //   remainder (string | null): The remaining text after the cursor. Use `null` if there's no remainder.
-    //   index (number): The current index or position in the processing sequence (e.g., 1).
-    //   isFirstTime (boolean): Set to `true` if this is the first time the function is called in the current round.
-    //                          Subsequent recursive calls (if any) are made from `newestRecursive.js`.
-    gridArray = Recursive.pushWordsDoThisSecond(gridArray, null, 1, true);
-    }
-
-    // Redraw the grid and update the cursor display after any changes
-    Recursive.displayGridAndCursor();
-  
-}
-    
-   
-    drawGrid(HEIGHT, WIDTH)
-    drawCursor(HOFFSET, VOFFSET)
-     </script>
-    </body>
+        if (WasJustaCursorMoveFlag === false) {
+          // Parameters:
+          //   remainder (string | null): The remaining text after the cursor. Use `null` if there's no remainder.
+          //   index (number): The current index or position in the processing sequence (e.g., 1).
+          //   isFirstTime (boolean): Set to `true` if this is the first time the function is called in the current round.
+          //                          Subsequent recursive calls (if any) are made from `newestRecursive.js`.
+          gridArray = Recursive.pushWordsDoThisSecond(gridArray, null, 1, true);
+        }
+        // Redraw the grid and update the cursor display after any changes
+        Recursive.displayGridAndCursor();
+      }
+      drawGrid(HEIGHT, WIDTH);
+      drawCursor(HOFFSET, VOFFSET);
+    </script>
+  </body>
+</html>
