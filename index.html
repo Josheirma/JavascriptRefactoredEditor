@@ -189,6 +189,7 @@ Javascript Text Editor
 
 
 
+let scale = window.devicePixelRatio || 1;
 
 // Function to initialize the canvas size and appearance
 
@@ -198,22 +199,22 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     canvas.style.height = `${verticalSize}px`;
 
     
-    //const scale = window.devicePixelRatio || 1;
-    let scale = 2
     
+   
 
-    //starts with a canvas with verticalsize: 190, and horizontalsize: 200 and scales it up to make bigger
-    canvas.width = horizontalSize * scale;
-    canvas.height = verticalSize * scale;
+    //how many pixels to draw on sized canvas - set the internal pixel resolution of the canvas.
+    //works internally. 
+    canvas.width = horizontalSize * (scale)  ;
+    canvas.height = verticalSize * (scale);
 
-    // Reset any previous transform
-    ctx.setTransform(1, 0, 0, 1, 0, 0); 
-    ctx.scale(scale, scale);
-
-
+    // Apply initial scale for high DPI - crispness
+    // scale drawing operations
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    
     // Set font and text alignment
-    ctx.font = '10px Monospace';
+   
     ctx.textAlign = 'center';
+    ctx.font = '10px Monospace'
 }
  
 
@@ -223,7 +224,7 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
 
   
   
-  
+  let IsFirstRun = true;
 
   
   function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
@@ -237,16 +238,19 @@ function makeCanvas(verticalSize = 190, horizontalSize = 200) {
     }
 
     
+    if(IsFirstRun){
     // All values are doubled due to the scaling below:
     //See Canvas and Grid constants for constant settings
-   
     makeCanvas(HEIGHT*10 + CANVASHEIGHTOFFSET, WIDTH*5 + CANVASWIDTHOFFSET)
+    IsFirstRun = false;
+    }
     // Set the fill color for the grid text (black)
     ctx.fillStyle = 'black';
-    // Reset any previous transform
-    ctx.setTransform(1, 0, 0, 1, 0, 0); 
-    //doubles size
-    ctx.scale(2, 2);
+    
+
+    ctx.clearRect(0, 0,  canvas.width, canvas.height); // Clear all
+   
+
     // Loop through the grid and render each cell's text
     for (let i = 0; i < iValue; i++) {
         for (let j = 0; j < jValue; j++) {
