@@ -16,6 +16,7 @@
       //global button references
       let inserting;
       let dashing;
+      
       // Initialize the classes for cursor movement and recursion
       document.addEventListener("DOMContentLoaded", () => {
         CursorMovements = new CursorMovementsClass();
@@ -35,11 +36,13 @@
           console.error("Dashes button not found");
         }
       });
+
       // Dash character to replace spaces for display
       let DASH = "-";
       // Flag to toggle dash display instead of spaces
       let areDashes = true;
     </script>
+    
     <!-- Canvas element for rendering content -->
     <div class="entireContainer">
       <div class="title">Javascript Text Editor</div>
@@ -67,6 +70,7 @@
       </div>
     </div>
     <script>
+
       //keep track of cursor location, horizontal step is 5, and vertical step is 10
       let horizontalCursorPosition = 0;
       let verticalCursorPosition = 0;
@@ -93,6 +97,7 @@
       let HEIGHT = 15;
       const ORIGINALHEIGHT = 15;
       let lastHeight = HEIGHT;
+      
       //Canvas and Grid constants
       //changes height and width for cursor
       const VOFFSET = 32;
@@ -110,6 +115,7 @@
       const CANVASHEIGHTOFFSET = 48;
       const CANVASWIDTHOFFSET = 64;
       let copy2DimArray = [];
+      
       // Canvas and context
       const canvas = document.getElementById("canvas_id");
       if (!canvas) {
@@ -122,6 +128,7 @@
       // Initial insert mode state
       let insertOn = true;
       let scale = window.devicePixelRatio || 1;
+      
       // Function to initialize the canvas size and appearance
       function makeCanvas(verticalSize = 190, horizontalSize = 200) {
         verticalSize = verticalSize * 2;
@@ -141,6 +148,7 @@
         ctx.font = "10px Monospace";
       }
       let IsFirstRun = true;
+      
       function drawGrid(iValue = HEIGHT, jValue = WIDTH) {
         // Ensure that gridArray is defined and has at least 'iValue' rows and 'jValue' columns
         // Exit the function early if the grid is invalid
@@ -182,6 +190,7 @@
           }
         }
       }
+      
       // HOFFSET and VOFFSET represent graphical offsets and are applied along with any additional x and y values.
       // These offsets are used to calculate the verticalCursorPosition and horizontalCursorPosition.
       function drawCursor(x, y) {
@@ -194,11 +203,13 @@
           y + FINETUNEDCURSORYONGRID
         );
       }
+      
       //holds key pressed
       let gKey = "";
       //array that holds key code, (number)
       var keyState = {};
       let down = false;
+      
       // Function to handle Insert button click event
       function handleInsertButtonClick() {
         // Toggle the insertOn flag
@@ -213,6 +224,7 @@
         // Update button text based on the insertOn state
         insertButton.innerHTML = insertOn ? "Insert" : "On Top";
       }
+      
       // This function handles the button click to toggle between displaying dashes and spaces on the grid
       function handleDashesButtonClick() {
         // Toggle the dash state: if showing dashes, switch to spaces, and vice versa.
@@ -252,6 +264,7 @@
         }
         Recursive.displayGridAndCursor();
       }
+      
       document.body.addEventListener(
         "keydown",
         function (e) {
@@ -269,6 +282,7 @@
         },
         false
       );
+      
       document.addEventListener(
         "keyup",
         function (e) {
@@ -282,6 +296,7 @@
         },
         false
       );
+      
       //these keys dont do anything
       const preventKeys = [
         "Tab",
@@ -295,6 +310,7 @@
         "Shift",
         "Escape",
       ];
+      
       // This function updates the display of the cursor's current horizontal and vertical positions
       function displayCursorLocations() {
         // Get the DOM element where the cursor positions will be displayed
@@ -312,6 +328,7 @@
           "Vertical: " +
           verticalPosition;
       }
+      
       // This function handles the cursor movements and function calls based on key presses
       function cursorAndFunctionCalls(event) {
         // Check if the key pressed is in the preventKeys array, and if so, return without doing anything
@@ -399,6 +416,7 @@
         // Redraw the grid and update the cursor display after any changes
         Recursive.displayGridAndCursor();
       }
+      
       drawGrid(HEIGHT, WIDTH);
       drawCursor(HOFFSET, VOFFSET);
     </script>

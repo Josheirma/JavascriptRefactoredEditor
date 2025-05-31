@@ -8,6 +8,7 @@ class RecursiveClass {
     this.bottomRowFromLastRound = [];
     this.hasBeenInZeroHorizPosition = false;
   }
+  
   // Deletes a row from the array if the index is valid
   deleteRow(arr, rowNumber) {
     if (rowNumber >= 0 && rowNumber < arr.length) {
@@ -17,6 +18,7 @@ class RecursiveClass {
     }
     return arr;
   }
+  
   // Appends a new row filled with placeholders to the grid
   createRow(grid) {
     const newRow = Array(WIDTH).fill("-");
@@ -25,6 +27,7 @@ class RecursiveClass {
     makeCanvas(HEIGHT * 10 + CANVASHEIGHTOFFSET, WIDTH * 5 + CANVASWIDTHOFFSET);
     return grid;
   }
+  
   // Splits the row at the last space or dash, preferring the rightmost one
   getLastSpaceOrDash(grid, topRow) {
     const lastIndexOfDash = topRow.lastIndexOf("-");
@@ -36,6 +39,7 @@ class RecursiveClass {
     const [leftSide, rightSide] = this.splitAtIndex(topRow, maxIndex + 1);
     return { leftSide, rightSide };
   }
+  
   // Moves overflowed word from top row to bottom row if space allows
   pushWordsDoThisSecond(grid, newRemainder, rowIndex, fromIndex) {
     if (rowIndex >= HEIGHT) return grid;
@@ -90,12 +94,14 @@ class RecursiveClass {
       return this.pushWordsDoThisSecond(grid, [""], rowIndex + 1, false);
     }
   }
+  
   // Finds the earliest space or dash in a row
   findLeftmostSpaceOrDash(row) {
     return [row.indexOf(" "), row.indexOf("-")]
       .map((index) => (index === -1 ? WIDTH : index))
       .reduce((min, curr) => Math.min(min, curr));
   }
+  
   //@@ Count available space in a row from a given index
   countRemainingNullsAndSpaces(grid, rowIndex, startIdx) {
     if (rowIndex >= HEIGHT || !grid[rowIndex]) return 0;
@@ -106,41 +112,50 @@ class RecursiveClass {
     }
     return remaining;
   }
+  
   // Replaces the last part of the row above with dashes
   replaceTopRowOnlyWithDashes(grid, rowIndex, length) {
     grid[rowIndex - 1].fill("-", WIDTH - length - 1, WIDTH);
   }
+  
   // Splits an array at a given index
   splitAtIndex(arr, index) {
     return [arr.slice(0, index), arr.slice(index)];
   }
+  
   // Helpers for row logic during Enter key press
   handleBaseCase(rowIndex) {
     return rowIndex >= HEIGHT - 1;
   }
+  
   getRowsToSplit(grid, rowIndex) {
     return {
       bottomRow: grid[rowIndex],
       topRow: grid[rowIndex + 1],
     };
   }
+  
   // Combines remaining string with the next row
   combineRowsWithRemainder(topRightRow, bottomRow, remainder) {
     return remainder.length > 0 && remainder[0] !== ""
       ? [...remainder, ...bottomRow]
       : [...topRightRow, ...bottomRow];
   }
+  
   // Cuts a string to fit the row, returns remainder
   adjustRowForWidth(buildNextRow) {
     return this.splitAtIndex(buildNextRow, WIDTH);
   }
+  
   // Assigns a row to a grid index
   updateGridRow(grid, rowIndex, oneRowsWorth) {
     grid[rowIndex + 1] = oneRowsWorth;
   }
+  
   repositionCursor(rowIndex, oneRowsWorth) {
     horizontalCursorPosition = oneRowsWorth.length * 5 + 5;
   }
+  
   // Erases a segment of the row and adds dashes
   replaceDashesWithOldWord(grid, rowIndex, colIndex) {
     if (verticalCursorPosition / 10 < HEIGHT) {
@@ -149,6 +164,7 @@ class RecursiveClass {
       }
     }
   }
+  
   // Handles Enter key logic to push text down to a new row
   pressedEnter(grid, rowIndex, colIndex, remainder, IsFirstTime, counter) {
     if (rowIndex > HEIGHT - 1) return grid;
@@ -168,6 +184,7 @@ class RecursiveClass {
     );
     return grid;
   }
+  
   // Recursive logic for dividing and continuing to wrap remainder
   divideNextRowsAsNeeded(grid, colIndex, rowIndex, remainder = []) {
     if (this.handleBaseCase(rowIndex)) {
@@ -199,12 +216,14 @@ class RecursiveClass {
     }
     return grid;
   }
+  
   // Handles deletion and pulling characters left
   deleteAndPullCharacters(rowIndex, columnIndex, grid) {
     return rowIndex > HEIGHT - 2
       ? this.handleLastRow(rowIndex, columnIndex, grid)
       : this.handleOtherRows(rowIndex, columnIndex, grid);
   }
+  
   // Handles deletion in the last row
   handleLastRow(rowIndex, columnIndex, grid) {
     let topRow = grid[rowIndex];
@@ -232,6 +251,7 @@ class RecursiveClass {
     grid[HEIGHT - 1][WIDTH - 1] = "-";
     return grid;
   }
+  
   // Handles deletion across multiple rows
   handleOtherRows(rowIndex, columnIndex, grid) {
     let topRow = grid[rowIndex];
@@ -251,10 +271,12 @@ class RecursiveClass {
     );
     return grid;
   }
+  
   // Removes first character from a row
   removeLeftmostCharacter(row) {
     return this.splitAtIndex(row, 1);
   }
+  
   ///////////////////////////////////
   // Moves character up and updates rows during deletion
   removeLeftCharacterFrom2ndRowAndReplaceAboveOnMostRightSide(
@@ -302,6 +324,7 @@ class RecursiveClass {
     );
     return grid;
   }
+  
   displayGridAndCursor() {
     drawGrid(HEIGHT, WIDTH);
     drawCursor(
@@ -309,11 +332,13 @@ class RecursiveClass {
       verticalCursorPosition + VOFFSET
     );
   }
+  
   //replaces character with another, doesn't move other characters, right on top
   placeCharacterWithoutInsertDoThisFirst(rowIndex, colIndex, grid, character) {
     grid[rowIndex][colIndex] = character;
     return grid;
   }
+  
   initialInsertDoThisFirst(rowIndex, colIndex, grid, leftOverChar, fromIndex) {
     if (rowIndex > HEIGHT - 1) {
       // Base case: Stop recursion when exceeding grid height

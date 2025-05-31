@@ -1,6 +1,7 @@
 /// Handles cursor movement across a grid and wraps around borders
 // Right and down move two positions per press; left and up move one position per press
 class CursorMovementsClass {
+  
   cursorRight() {
     // If cursor is at the far right edge, wrap to the beginning of the next row
     if (horizontalCursorPosition >= (WIDTH - 1) * 5) {
@@ -17,6 +18,7 @@ class CursorMovementsClass {
       horizontalCursorPosition += 10;
     }
   }
+  
   cursorRightOneSpace() {
     // If the cursor is on the last column, move to start of next line
     if (horizontalCursorPosition >= WIDTH * 5 - 5) {
@@ -28,6 +30,7 @@ class CursorMovementsClass {
       horizontalCursorPosition += 5;
     }
   }
+  
   cursorLeft() {
     // Prevent cursor from moving past the top-left corner
     if (horizontalCursorPosition / 5 <= 0 && verticalCursorPosition / 10 <= 0) {
@@ -43,6 +46,7 @@ class CursorMovementsClass {
       horizontalCursorPosition -= 5;
     }
   }
+  
   cursorUp() {
     // Prevent movement above the top row
     if (verticalCursorPosition <= 0) {
@@ -52,6 +56,7 @@ class CursorMovementsClass {
     // Move one row up
     verticalCursorPosition -= 10;
   }
+  
   cursorDown() {
     // Prevent movement beyond the bottom row
     if (verticalCursorPosition >= (HEIGHT - 1) * 10) {
