@@ -1,6 +1,4 @@
-//
-//@@ - recently changed code section
-//& - needs improvement or cleanup
+
 class RecursiveClass {
   constructor() {
     this.lastRowIndexToPushOn = -1;
