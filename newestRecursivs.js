@@ -1,4 +1,3 @@
-
 class RecursiveClass {
   constructor() {
     this.lastRowIndexToPushOn = -1;
